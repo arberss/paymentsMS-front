@@ -18,6 +18,7 @@ import {
   editPayment,
 } from '@/store/slices/payments/addPaymentSlice';
 import { IPayment } from '@/types/payments/payments';
+import { deletePayment } from '@/store/slices/payments/deletePaymentSlice';
 
 interface AddPaymentProps {
   title: string;
@@ -83,6 +84,15 @@ const AddPayment = ({
       }
     },
   });
+
+  const handleDelete = () => {
+    dispatch(
+      deletePayment({
+        userId: formik.values.userId,
+        paymentId: selectedPayment?._id,
+      })
+    );
+  };
 
   return (
     <Modal
@@ -226,6 +236,7 @@ const AddPayment = ({
             sx={{ width: '100%', marginTop: 10, fontSize: 16 }}
             variant='outline'
             color='red'
+            onClick={() => handleDelete()}
           >
             Fshij
           </Button>

@@ -1,3 +1,4 @@
+import { IPayment } from './../../../types/payments/payments';
 import toast from '@/shared-components/toast/toast';
 import { IPaymentsUser } from '@/types/payments/payments';
 import axios from '@/utils/axios';
@@ -9,6 +10,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { addPayment, editPayment } from './addPaymentSlice';
+import { deletePayment } from './deletePaymentSlice';
 import { paymentUpdater } from './helper';
 
 interface PaymentsProps {
@@ -96,6 +98,31 @@ export const paymentsSlice = createSlice({
 
         toast({ title: 'Pagesa u shtua me sukses', status: 'success' });
         state.payments = newPaymentData;
+      }
+    );
+
+    builder.addCase(
+      deletePayment.fulfilled,
+      (
+        state,
+        action: PayloadAction<{
+          userId: string;
+          paymentId: string;
+        }>
+      ) => {
+        const initState = current(state);
+        const userPaymentsIndex = initState.payments.findIndex(
+          (payment: IPaymentsUser) => payment.user._id === action.payload.userId
+        );
+
+        if (userPaymentsIndex !== -1) {
+          const filteredValue = initState.payments[userPaymentsIndex].payments.filter(
+            (userPayment: IPayment) => {
+              return userPayment._id !== action.payload.paymentId;
+            }
+          );
+          state.payments[userPaymentsIndex].payments = filteredValue;
+        }
       }
     );
   },
