@@ -1,0 +1,9 @@
+.tableTopActions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+
+  &__button {
+    font-size: 15px;
+  }
+}
