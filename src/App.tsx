@@ -6,9 +6,14 @@ import { decodeToken } from './utils/decodeToken';
 import { checkLogin, logout } from '@/store/slices/auth/loginSlice';
 import { ToastContainer } from 'react-toastify';
 import RoutesComponent from './Routes/Routes';
+import { getStatuses } from './store/slices/statuses/statusesSlice';
 
 function App() {
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getStatuses());
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token');

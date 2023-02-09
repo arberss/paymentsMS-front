@@ -1,3 +1,4 @@
+import statusesSlice from './slices/statuses/statusesSlice';
 import addPaymentSlice from './slices/payments/addPaymentSlice';
 import paymentsSlice from './slices/payments/paymentsSlice';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
@@ -21,6 +22,9 @@ export const store = configureStore({
     }),
     users: combineReducers({
       users: usersSlice,
+    }),
+    statuses: combineReducers({
+      statuses: statusesSlice,
     }),
   },
   middleware: (getDefaultMiddleware) =>

@@ -4,10 +4,12 @@ import AuthLayout from '@/shared-components/Layouts/Auth/AuthLayout';
 import { Link, useNavigate } from 'react-router-dom';
 import NumberInput from '@/shared-components/Form/Input/NumberInput';
 import { useFormik } from 'formik';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { registerUser } from '@/store/slices/auth/registerSlice';
 import { validationSchema } from './helper';
 import { useState } from 'react';
+import Select from '@/shared-components/Form/Select/Select';
+import { IStatus } from '@/types/statuses/statuses';
 
 export interface RegisterFormData {
   firstName: string;
@@ -22,6 +24,16 @@ export interface RegisterFormData {
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const {
+    statuses: { statuses },
+  } = useAppSelector((state) => state.statuses);
+  const statusesSelectData = statuses?.map((status: IStatus) => {
+    return {
+      label: status.name,
+      value: status._id,
+    };
+  });
+
   const [passwordVisibility, setPasswordVisibility] = useState(false);
 
   const initialValues: RegisterFormData = {
@@ -40,9 +52,9 @@ const Register = () => {
     onSubmit: async (values, formikHelpers) => {
       try {
         const result: { [key: string]: any } = await dispatch(
-          registerUser({ values, formikHelpers, navigate })
+          registerUser({ values })
         );
-
+        console.log('result?.error', result?.error);
         if (!result?.error) {
           formikHelpers.resetForm();
           navigate('/auth/login');
@@ -89,10 +101,13 @@ const Register = () => {
               />
             </Grid.Col>
             <Grid.Col xs={12} sm={6} md={6}>
-              <Input
+              <Select
                 name='status'
                 label='Lagja'
-                onChange={formik.handleChange}
+                data={statusesSelectData}
+                onChange={(value: string) =>
+                  formik.setFieldValue('status', value)
+                }
                 value={formik.values.status}
                 error={formik.errors.status}
               />

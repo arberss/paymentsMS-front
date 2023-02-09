@@ -37,9 +37,9 @@ export const registerSlice = createSlice({
     builder.addCase(registerUser.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(registerUser.fulfilled, (state, action) => {
-      action.payload.data.navigate('/auth/login');
+    builder.addCase(registerUser.fulfilled, (state) => {
       state.loading = false;
+      toast({ title: "Regjistrimi u kry me sukses", status: 'success' });
     });
     builder.addCase(
       registerUser.rejected,
