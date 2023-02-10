@@ -2,6 +2,7 @@ import { columnRowType } from '@/components/Table/Table';
 import PaymentColumn from '@/pages/Payments/PaymentColumn';
 import { IPayment, IPaymentsUser } from '@/types/payments/payments';
 import { IUser } from '@/types/user/user';
+import moment from 'moment';
 
 type PaymentsType = IPaymentsUser & { _id: string };
 
@@ -61,8 +62,8 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
   });
 
   const sortedYears = years.sort((x, y) => x - y);
-  const minYear = sortedYears.length > 0 ? Math.min(...sortedYears) : 0;
-  const maxYear = sortedYears.length > 0 ? Math.max(...sortedYears) : 0;
+  const minYear = sortedYears.length > 0 ? Math.min(...sortedYears) : moment().add(-1, 'years').year();
+  const maxYear = sortedYears.length > 0 ? Math.max(...sortedYears) : moment().year();
 
   const diff = maxYear - minYear;
   const allYears: number[] = Array.from({ length: diff + 1 }).map(
@@ -93,11 +94,21 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
   const mappedRows: { key: string; [key: string]: any }[] = [];
   payments?.forEach(
     (payment: { _id: string; payments: IPayment[]; user: IUser }) => {
+      if (payment.payments.length < 1) {
+        mappedRows.push({
+          key: payment.user.personalNumber,
+          userPaymentsId: payment._id,
+          personalNumber: payment.user.personalNumber,
+          name: `${payment.user.firstName} ${payment.user.lastName}`,
+        });
+      }
+
       payment.payments.forEach((pay: IPayment) => {
         const findItemIndex = mappedRows.findIndex(
           (item: { [key: string]: any }) =>
             item.key === payment.user.personalNumber
         );
+
         if (findItemIndex !== -1) {
           mappedRows[findItemIndex] = {
             ...mappedRows[findItemIndex],

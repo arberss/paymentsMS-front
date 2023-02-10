@@ -22,11 +22,12 @@ import {
   setModalOpen,
   setUserPayments,
 } from '@/store/slices/payments/userPaymentsSlice';
+import Loader from '@/components/Loader/Loader';
 
 const Payments = () => {
   const dispatch = useAppDispatch();
   const {
-    payments: { payments },
+    payments: { payments, loading },
     addPayment: { openPaymentModal, payment },
   } = useAppSelector((state) => state.payments);
 
@@ -106,6 +107,10 @@ const Payments = () => {
     handleAddPayment(null);
     dispatch(setPayment(null));
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>

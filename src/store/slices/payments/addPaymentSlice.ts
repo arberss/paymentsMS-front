@@ -8,6 +8,7 @@ import {
   isAnyOf,
   PayloadAction,
 } from '@reduxjs/toolkit';
+import { deletePayment } from './deletePaymentSlice';
 
 interface AddPaymentProps {
   loading: boolean;
@@ -86,7 +87,11 @@ export const addPaymentSlice = createSlice({
       }
     );
     builder.addMatcher(
-      isAnyOf(editPayment.fulfilled, addPayment.fulfilled),
+      isAnyOf(
+        addPayment.fulfilled,
+        editPayment.fulfilled,
+        deletePayment.fulfilled
+      ),
       (state) => {
         state.loading = false;
         state.openPaymentModal = null;

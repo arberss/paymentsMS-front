@@ -18,6 +18,10 @@ import {
   editPayment,
 } from '@/store/slices/payments/addPaymentSlice';
 import { IPayment } from '@/types/payments/payments';
+import { deletePayment } from '@/store/slices/payments/deletePaymentSlice';
+import Loader from '@/components/Loader/Loader';
+import { useState } from 'react';
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
 
 interface AddPaymentProps {
   title: string;
@@ -57,7 +61,10 @@ const AddPayment = ({
   } = useAppSelector((state) => state.users);
   const {
     addPayment: { loading },
+    deletePayment: { loading: deleteLoading },
   } = useAppSelector((state) => state.payments);
+
+  const [confirmModal, setConfirmModal] = useState<boolean>(false);
 
   const actionValues = {
     [actionsEnum.add]: {
@@ -83,6 +90,16 @@ const AddPayment = ({
       }
     },
   });
+
+  const handleDelete = () => {
+    dispatch(
+      deletePayment({
+        userId: formik.values.userId,
+        paymentId: selectedPayment?._id,
+      })
+    );
+    setConfirmModal(false);
+  };
 
   return (
     <Modal
@@ -226,6 +243,7 @@ const AddPayment = ({
             sx={{ width: '100%', marginTop: 10, fontSize: 16 }}
             variant='outline'
             color='red'
+            onClick={() => setConfirmModal(true)}
           >
             Fshij
           </Button>
@@ -233,11 +251,17 @@ const AddPayment = ({
         <Button
           type='submit'
           sx={{ width: '100%', marginTop: 10, fontSize: 16 }}
-          loading={loading}
         >
           {action === actionsEnum.add ? 'Shto' : 'Ndrysho'}
         </Button>
       </form>
+      <ConfirmModal
+        isOpen={confirmModal}
+        onClose={() => setConfirmModal(false)}
+        onConfirm={() => handleDelete()}
+        description={`A jeni i sigurt qe deshironi ta fshini pagesen per vitin ${formik.values.payedForYear}?`}
+      />
+      {(loading || deleteLoading) && <Loader position='absolute' backdrop />}
     </Modal>
   );
 };
