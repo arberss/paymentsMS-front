@@ -40,9 +40,7 @@ const Table = ({
         name: 'Veprimet',
         frozen: options?.actionColumn?.frozen,
         width: options?.actionColumn?.width,
-        headerRenderer: ({ column }: { column: columnRowType }) => (
-          <div className='tableGrid__column'>{column?.name}</div>
-        ),
+        headerRenderer: ({ column }: { column: columnRowType }) => column?.name,
         formatter: ({ row }: { row: any }): JSX.Element => (
           <div className='tableGrid__actions'>
             <ColumnActions rowData={row} actions={actions} />

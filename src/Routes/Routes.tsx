@@ -1,6 +1,7 @@
 import Register from '@/pages/Auth/Register/Register';
 import Dashboard from '@/pages/Dashboard/Dashboard';
 import Payments from '@/pages/Payments/Payments';
+import Statuses from '@/pages/Statuses/Statuses';
 import { decodeToken } from '@/utils/decodeToken';
 import { Route, Routes } from 'react-router-dom';
 import Login from '../pages/Auth/Login/Login';
@@ -20,6 +21,7 @@ const RoutesComponent = () => {
         }
       >
         <Route path='payments' element={<Payments />} />
+        <Route path='statuses' element={<Statuses />} />
       </Route>
 
       {!decodedToken && (

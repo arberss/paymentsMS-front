@@ -54,7 +54,7 @@ const Register = () => {
         const result: { [key: string]: any } = await dispatch(
           registerUser({ values })
         );
-        console.log('result?.error', result?.error);
+        
         if (!result?.error) {
           formikHelpers.resetForm();
           navigate('/auth/login');

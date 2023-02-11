@@ -36,7 +36,7 @@ function MainLink({ icon, color, label, to, onClick }: MainLinkProps) {
             {icon}
           </ThemeIcon>
 
-          <Text sx={{fontSize: 15}}>{label}</Text>
+          <Text sx={{fontSize: 15, letterSpacing: 0.2}}>{label}</Text>
         </Group>
       </UnstyledButton>
     </NavLink>

@@ -1,13 +1,11 @@
 .tableGrid {
   font-size: 15px;
 
-  &__column {
+  .rdg-cell {
     padding: 0px 5px;
   }
 
   &__row {
-    padding: 0px 5px;
-
     &--empty {
       height: 100%;
       background-color: #fff0f0;

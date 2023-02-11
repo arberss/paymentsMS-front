@@ -62,8 +62,12 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
   });
 
   const sortedYears = years.sort((x, y) => x - y);
-  const minYear = sortedYears.length > 0 ? Math.min(...sortedYears) : moment().add(-1, 'years').year();
-  const maxYear = sortedYears.length > 0 ? Math.max(...sortedYears) : moment().year();
+  const minYear =
+    sortedYears.length > 0
+      ? Math.min(...sortedYears)
+      : moment().add(-1, 'years').year();
+  const maxYear =
+    sortedYears.length > 0 ? Math.max(...sortedYears) : moment().year();
 
   const diff = maxYear - minYear;
   const allYears: number[] = Array.from({ length: diff + 1 }).map(
@@ -76,9 +80,7 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
     return {
       key: year.toString(),
       name: year.toString(),
-      headerRenderer: ({ column }: { column: columnRowType }) => (
-        <div className='tableGrid__column'>{column?.name}</div>
-      ),
+      headerRenderer: ({ column }: { column: columnRowType }) => column?.name,
       formatter: ({
         column,
         row,
