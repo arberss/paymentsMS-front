@@ -17,4 +17,5 @@ export interface IPayment {
 export interface IPaymentsUser {
   payments: IPayment[];
   user: IUser;
+  totalPayed?: number;
 }

@@ -70,6 +70,32 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
     },
   ];
 
+  const lastStaticColumns: { key: string; name: string; [key: string]: any }[] =
+    [
+      {
+        key: 'totalPayed',
+        name: 'Totali',
+        width: 150,
+        resizable: true,
+        headerRenderer: ({ column }: { column: columnRowType }) => (
+          <div className='tableGrid__column'>{column?.name}</div>
+        ),
+        formatter: ({
+          column,
+          row,
+        }: {
+          column: columnRowType;
+          row: columnRowType;
+        }) => (
+          <PaymentColumn
+            clickedRowId={clickedRowId}
+            column={column}
+            row={row}
+          />
+        ),
+      },
+    ];
+
   const years: number[] = [];
   payments?.forEach((payment: { payments: IPayment[] }) => {
     return payment.payments?.forEach((pay: IPayment) => {
@@ -113,7 +139,12 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
 
   const mappedRows: { key: string; [key: string]: any }[] = [];
   payments?.forEach(
-    (payment: { _id: string; payments: IPayment[]; user: IUser }) => {
+    (payment: {
+      _id: string;
+      payments: IPayment[];
+      user: IUser;
+      totalPayed?: number;
+    }) => {
       if (payment.payments.length < 1) {
         mappedRows.push({
           key: payment.user.personalNumber,
@@ -148,6 +179,7 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
               typeof payment.user.status === 'string'
                 ? payment.user.status
                 : payment.user.status.name,
+            totalPayed: payment.totalPayed,
             [pay.payedForYear]: pay.amount,
             paymentIds: {
               [pay.payedForYear]: pay._id,
@@ -159,7 +191,7 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
   );
 
   return {
-    columns: [...staticColumns, ...columns] ?? [],
+    columns: [...staticColumns, ...columns, ...lastStaticColumns] ?? [],
     rows: mappedRows ?? [],
   };
 };
