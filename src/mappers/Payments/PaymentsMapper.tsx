@@ -50,6 +50,24 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
         <PaymentColumn clickedRowId={clickedRowId} column={column} row={row} />
       ),
     },
+    {
+      key: 'status',
+      name: 'Lagja',
+      width: 150,
+      resizable: true,
+      headerRenderer: ({ column }: { column: columnRowType }) => (
+        <div className='tableGrid__column'>{column?.name}</div>
+      ),
+      formatter: ({
+        column,
+        row,
+      }: {
+        column: columnRowType;
+        row: columnRowType;
+      }) => (
+        <PaymentColumn clickedRowId={clickedRowId} column={column} row={row} />
+      ),
+    },
   ];
 
   const years: number[] = [];
@@ -126,6 +144,10 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
             userPaymentsId: payment._id,
             personalNumber: payment.user.personalNumber,
             name: `${payment.user.firstName} ${payment.user.lastName}`,
+            status:
+              typeof payment.user.status === 'string'
+                ? payment.user.status
+                : payment.user.status.name,
             [pay.payedForYear]: pay.amount,
             paymentIds: {
               [pay.payedForYear]: pay._id,

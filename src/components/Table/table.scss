@@ -2,10 +2,16 @@
   font-size: 15px;
 
   .rdg-cell {
-    padding: 0px 5px;
+    padding: 0 5px;
+
+    &:has(.tableGrid__row) {
+      padding: 0;
+    }
   }
 
   &__row {
+    padding: 0 5px;
+
     &--empty {
       height: 100%;
       background-color: #fff0f0;

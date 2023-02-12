@@ -7,5 +7,8 @@ export interface IUser {
   createdAt?: Date;
   updatedAt?: Date;
   role: string;
-  status?: string;
+  status: string | {
+    _id: string;
+    name: string;
+  };
 }
