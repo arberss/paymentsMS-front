@@ -42,13 +42,7 @@ export const PaymentsMapper = ({
       }) => (
         <PaymentColumn clickedRowId={clickedRowId} column={column} row={row} />
       ),
-      summaryFormatter({
-        row,
-        column,
-      }: {
-        column: columnRowType;
-        row: columnRowType;
-      }) {
+      summaryFormatter() {
         return <>Totali</>;
       },
     },
