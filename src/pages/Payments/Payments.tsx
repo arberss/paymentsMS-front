@@ -40,7 +40,10 @@ const Payments = () => {
     dispatch(getUsers());
   }, []);
 
-  const { columns, rows } = PaymentsMapper({ payments, clickedRowId });
+  const { columns, rows, bottomRows } = PaymentsMapper({
+    payments,
+    clickedRowId,
+  });
 
   const tableActions = [
     ({ rowData }: { rowData?: { [key: string]: any } }): Actions => ({
@@ -133,6 +136,9 @@ const Payments = () => {
             width: 20,
           },
         }}
+        bottomRows={
+          [bottomRows] as { [key: string]: string | number; key: string }[]
+        }
       />
       <AddPayment
         title={

@@ -9,9 +9,20 @@ type PaymentsType = IPaymentsUser & { _id: string };
 interface IPaymentsMapper {
   payments: PaymentsType[];
   clickedRowId?: string;
+  showFooterTotal?: boolean;
 }
 
-export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
+interface PaymentsMapperValues {
+  columns: { key: string; name: string; [key: string]: any }[];
+  rows: { key: string; [key: string]: any }[];
+  bottomRows?: { key: string; [key: string]: string | number };
+}
+
+export const PaymentsMapper = ({
+  payments,
+  clickedRowId,
+  showFooterTotal = true,
+}: IPaymentsMapper): PaymentsMapperValues => {
   const staticColumns: { key: string; name: string; [key: string]: any }[] = [
     {
       key: 'name',
@@ -31,6 +42,15 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
       }) => (
         <PaymentColumn clickedRowId={clickedRowId} column={column} row={row} />
       ),
+      summaryFormatter({
+        row,
+        column,
+      }: {
+        column: columnRowType;
+        row: columnRowType;
+      }) {
+        return <>Totali</>;
+      },
     },
     {
       key: 'personalNumber',
@@ -93,6 +113,15 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
             row={row}
           />
         ),
+        summaryFormatter({
+          row,
+          column,
+        }: {
+          column: columnRowType;
+          row: columnRowType;
+        }) {
+          return <>{row[column.key]}</>;
+        },
       },
     ];
 
@@ -134,6 +163,15 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
       }) => (
         <PaymentColumn clickedRowId={clickedRowId} column={column} row={row} />
       ),
+      summaryFormatter({
+        row,
+        column,
+      }: {
+        column: columnRowType;
+        row: columnRowType;
+      }) {
+        return <>{row[column.key]}</>;
+      },
     };
   });
 
@@ -193,5 +231,23 @@ export const PaymentsMapper = ({ payments, clickedRowId }: IPaymentsMapper) => {
   return {
     columns: [...staticColumns, ...columns, ...lastStaticColumns] ?? [],
     rows: mappedRows ?? [],
+    bottomRows: showFooterTotal ? calculateYearTotal(payments) : undefined,
   };
+};
+
+export const calculateYearTotal = (data: IPaymentsUser[]) => {
+  const years: { key: string; [key: string]: any } = {
+    key: '',
+    isFooter: true,
+  };
+
+  data.forEach((payment: IPaymentsUser) => {
+    payment.payments.forEach((item) => {
+      years[item.payedForYear] =
+        years[item.payedForYear] + item.amount || item.amount;
+      years['totalPayed'] = (years['totalPayed'] || 0) + item.amount;
+    });
+  });
+
+  return years;
 };

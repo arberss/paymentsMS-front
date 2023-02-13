@@ -20,6 +20,7 @@ interface TableProps {
       position?: 'left' | 'right';
     };
   };
+  bottomRows?: { key: string; [key: string]: string | number }[] | null;
 }
 
 const Table = ({
@@ -30,6 +31,7 @@ const Table = ({
   exports,
   actions,
   options,
+  bottomRows
 }: TableProps) => {
   let customColumns = [...columns];
 
@@ -63,6 +65,7 @@ const Table = ({
       rows={rows}
       onRowDoubleClick={onRowDoubleClick}
       onRowClick={onRowClick}
+      bottomSummaryRows={bottomRows}
     />
   );
 
