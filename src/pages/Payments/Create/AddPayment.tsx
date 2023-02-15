@@ -42,7 +42,7 @@ const initialValues: InitialValuesType = {
   paymentDate: moment().toDate(),
   payedForYear: Number(moment().year()),
   exchange: '',
-  amount: undefined,
+  amount: 0,
   payer: '',
   paymentReceiver: '',
   nrOfPersons: 1,

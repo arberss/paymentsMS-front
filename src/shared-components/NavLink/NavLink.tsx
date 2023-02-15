@@ -10,6 +10,7 @@ const style = {
   color: 'inherit',
   textDecoration: 'inherit',
   borderRadius: 4,
+  margin: '5px 0',
 };
 
 const NavLink = ({ to, children }: NavLinkProps) => {

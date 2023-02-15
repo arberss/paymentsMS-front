@@ -2,6 +2,7 @@ import { IStatus } from '@/types/statuses/statuses';
 import { returnError } from '@/utils/reduxAsyncError';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { addStatus } from './addStatusSlice';
 
 interface StatusesProps {
   loading: boolean;
@@ -33,13 +34,24 @@ export const statusesSlice = createSlice({
     builder.addCase(getStatuses.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(getStatuses.fulfilled, (state, action: PayloadAction<{data: IStatus[]}>) => {
-      state.loading = false;
-      state.statuses = action.payload.data;
-    });
+    builder.addCase(
+      getStatuses.fulfilled,
+      (state, action: PayloadAction<{ data: IStatus[] }>) => {
+        state.loading = false;
+        state.statuses = action.payload.data;
+      }
+    );
     builder.addCase(getStatuses.rejected, (state) => {
       state.loading = false;
     });
+
+    builder.addCase(
+      addStatus.fulfilled,
+      (state, action: PayloadAction<IStatus>) => {
+        state.loading = false;
+        state.statuses = [{ ...action.payload, users: 0 }, ...state.statuses];
+      }
+    );
   },
 });
 

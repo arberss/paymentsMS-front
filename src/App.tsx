@@ -1,15 +1,18 @@
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from './ThemeProvider';
-import { useAppDispatch } from './store/hooks';
+import { useAppDispatch, useAppSelector } from './store/hooks';
 import { useEffect } from 'react';
 import { decodeToken } from './utils/decodeToken';
 import { checkLogin, logout } from '@/store/slices/auth/loginSlice';
 import { ToastContainer } from 'react-toastify';
-import RoutesComponent from './Routes/Routes';
+import RoutesComponent from './routes/Routes';
 import { getStatuses } from './store/slices/statuses/statusesSlice';
 
 function App() {
   const dispatch = useAppDispatch();
+  const {
+    login: { isAuth },
+  } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(getStatuses());
@@ -23,7 +26,7 @@ function App() {
       dispatch(logout());
     }
     dispatch(checkLogin({ token }));
-  }, []);
+  }, [isAuth]);
 
   return (
     <ThemeProvider>

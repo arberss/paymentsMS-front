@@ -1,3 +1,4 @@
+import addStatusSlice, { addStatus } from './slices/statuses/addStatusSlice';
 import statusesSlice from './slices/statuses/statusesSlice';
 import addPaymentSlice from './slices/payments/addPaymentSlice';
 import paymentsSlice from './slices/payments/paymentsSlice';
@@ -25,6 +26,7 @@ export const store = configureStore({
     }),
     statuses: combineReducers({
       statuses: statusesSlice,
+      addStatus: addStatusSlice,
     }),
   },
   middleware: (getDefaultMiddleware) =>

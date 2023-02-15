@@ -2,7 +2,7 @@ import { IUser } from '../user/user';
 
 export interface IPayment {
   _id?: string;
-  amount: number | undefined;
+  amount: number;
   exchange: string;
   householdHeader?: string;
   nrOfPersons: number;
@@ -17,4 +17,5 @@ export interface IPayment {
 export interface IPaymentsUser {
   payments: IPayment[];
   user: IUser;
+  totalPayed?: number;
 }

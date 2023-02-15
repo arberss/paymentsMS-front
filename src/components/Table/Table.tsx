@@ -20,6 +20,7 @@ interface TableProps {
       position?: 'left' | 'right';
     };
   };
+  bottomRows?: { key: string; [key: string]: string | number }[] | null;
 }
 
 const Table = ({
@@ -30,6 +31,7 @@ const Table = ({
   exports,
   actions,
   options,
+  bottomRows
 }: TableProps) => {
   let customColumns = [...columns];
 
@@ -40,9 +42,7 @@ const Table = ({
         name: 'Veprimet',
         frozen: options?.actionColumn?.frozen,
         width: options?.actionColumn?.width,
-        headerRenderer: ({ column }: { column: columnRowType }) => (
-          <div className='tableGrid__column'>{column?.name}</div>
-        ),
+        headerRenderer: ({ column }: { column: columnRowType }) => column?.name,
         formatter: ({ row }: { row: any }): JSX.Element => (
           <div className='tableGrid__actions'>
             <ColumnActions rowData={row} actions={actions} />
@@ -65,6 +65,7 @@ const Table = ({
       rows={rows}
       onRowDoubleClick={onRowDoubleClick}
       onRowClick={onRowClick}
+      bottomSummaryRows={bottomRows}
     />
   );
 
