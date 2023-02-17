@@ -7,17 +7,17 @@ import {
   setPayment,
   setPaymentModalValue,
 } from '@/store/slices/payments/addPaymentSlice';
-import { PaymentsMapper } from '@/mappers/Payments/PaymentsMapper';
-import AddPayment from './Create/AddPayment';
+import { PaymentsMapper } from '@/mappers/PaymentsMapper';
+import AddPayment from './create/AddPayment';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
 import moment from 'moment';
 import { getUsers } from '@/store/slices/user/usersSlice';
 import { actionsEnum } from '@/types/enums/typeEnum';
 import { IPayment, IPaymentsUser } from '@/types/payments/payments';
 import { IUser } from '@/types/user/user';
-import { Actions } from '@/components/Table/Actions/TableActions';
+import { Actions } from '@/components/Table/actions/TableActions';
 import { IconEye } from '@tabler/icons-react';
-import UserPayments from './UserPayments/UserPayments';
+import UserPayments from './userPayments/UserPayments';
 import {
   setModalOpen,
   setUserPayments,
@@ -41,7 +41,7 @@ const Payments = () => {
   }, []);
 
   const { columns, rows, bottomRows } = PaymentsMapper({
-    payments,
+    data: payments,
     clickedRowId,
   });
 
@@ -62,9 +62,7 @@ const Payments = () => {
   ];
 
   const onRowClick = (column: columnRowType, row: columnRowType) => {
-    if (row.key === 'name') {
-      setClickedRowId(column.userPaymentsId);
-    }
+    setClickedRowId(column.userPaymentsId);
   };
 
   const onRowDoubleClick = (column: columnRowType, row: columnRowType) => {

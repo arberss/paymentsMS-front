@@ -1,28 +1,17 @@
 import TableSelectedColumn from '@/components/Table/components/TableSelectedColumn/TableSelectedColumn';
 import { columnRowType } from '@/components/Table/Table';
+import { IMapperProps, IMapperValues } from '@/types/mappers/mappers';
 import { IPayment, IPaymentsUser } from '@/types/payments/payments';
 import { IUser } from '@/types/user/user';
 import moment from 'moment';
 
 type PaymentsType = IPaymentsUser & { _id: string };
 
-interface IPaymentsMapper {
-  payments: PaymentsType[];
-  clickedRowId?: string;
-  showFooterTotal?: boolean;
-}
-
-interface PaymentsMapperValues {
-  columns: { key: string; name: string; [key: string]: any }[];
-  rows: { key: string; [key: string]: any }[];
-  bottomRows?: { key: string; [key: string]: string | number };
-}
-
 export const PaymentsMapper = ({
-  payments,
+  data: payments,
   clickedRowId,
   showFooterTotal = true,
-}: IPaymentsMapper): PaymentsMapperValues => {
+}: IMapperProps<PaymentsType[]>): IMapperValues => {
   const staticColumns: { key: string; name: string; [key: string]: any }[] = [
     {
       key: 'name',
@@ -251,7 +240,7 @@ export const calculateYearTotal = (data: IPaymentsUser[]) => {
     isFooter: true,
   };
 
-  data.forEach((payment: IPaymentsUser) => {
+  data?.forEach((payment: IPaymentsUser) => {
     payment.payments.forEach((item) => {
       years[item.payedForYear] =
         years[item.payedForYear] + item.amount || item.amount;

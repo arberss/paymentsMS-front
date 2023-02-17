@@ -2,9 +2,14 @@ import TableSelectedColumn from '@/components/Table/components/TableSelectedColu
 import { columnRowType } from '@/components/Table/Table';
 import { IAction } from '@/types/actions/actions';
 import { currencyEnums, typeEnum, typeEnumsAl } from '@/types/enums/typeEnum';
+import { IMapperProps, IMapperValues } from '@/types/mappers/mappers';
 import moment from 'moment';
 
-export const ActionMappers = (actions: IAction[], clickedRowId?: string) => {
+export const ActionMappers = ({
+  data: actions,
+  clickedRowId,
+  showFooterTotal = true,
+}: IMapperProps<IAction[]>): IMapperValues => {
   const columns = [
     {
       key: 'user',
@@ -241,5 +246,29 @@ export const ActionMappers = (actions: IAction[], clickedRowId?: string) => {
   return {
     columns,
     rows,
+    bottomRows: showFooterTotal ? calculateAmounts(actions) : undefined,
   };
+};
+
+const calculateAmounts = (actions: IAction[]) => {
+  const values: { key: string; [key: string]: any } = {
+    key: '',
+    isFooter: true,
+  };
+
+  actions?.forEach((action: IAction) => {
+    values['currencies'] = {
+      ...(values['currencies'] ?? {}),
+      [action.currency]: action.currency,
+    };
+
+    values[action.type] = {
+      ...(values[action.type] ?? {}),
+      [action.currency]:
+        values?.[action.type]?.[action.currency] + action.amount ||
+        action.amount,
+    };
+  });
+
+  return values;
 };

@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import Loader from '@/components/Loader/Loader';
 import { IAction } from '@/types/actions/actions';
 import { validationSchema } from '../helper';
-import { typeSelector } from '@/pages/Payments/Create/helper';
+import { typeSelector } from '@/pages/Payments/create/helper';
 import { getCurrencies, getMonths, getYears } from '@/utils/general';
 import { addAction } from '@/store/slices/actions/addActionSlice';
 
@@ -75,7 +75,6 @@ const AddAction = ({ title, isOpen, onClose, action }: AddActionProps) => {
           onClose();
         }
       } catch (error) {
-        console.log('error', error);
         return error;
       }
     },

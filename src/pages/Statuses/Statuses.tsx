@@ -4,7 +4,7 @@ import TableTopActions from '@/components/TableTopActions/TableTopActions';
 import { useAppSelector } from '@/store/hooks';
 import { StatusActionType } from '@/types/statuses/statuses';
 import { useState } from 'react';
-import AddStatus from './Create/AddStatus';
+import AddStatus from './create/AddStatus';
 
 const columns = [
   { key: 'name', name: 'Emri' },

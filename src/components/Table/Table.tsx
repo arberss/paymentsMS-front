@@ -1,7 +1,7 @@
 import DataGrid from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
-import ColumnActions, { Actions } from './Actions/TableActions';
-import ExportActions from './Export/ExportActions';
+import ColumnActions, { Actions } from './actions/TableActions';
+import ExportActions from './export/ExportActions';
 import './table.scss';
 
 export type columnRowType = { [key: string]: any };
@@ -21,6 +21,7 @@ interface TableProps {
     };
   };
   bottomRows?: { key: string; [key: string]: string | number }[] | null;
+  style?: React.CSSProperties;
 }
 
 const Table = ({
@@ -31,7 +32,8 @@ const Table = ({
   exports,
   actions,
   options,
-  bottomRows
+  bottomRows,
+  style
 }: TableProps) => {
   let customColumns = [...columns];
 
@@ -60,6 +62,7 @@ const Table = ({
 
   const gridElement = (
     <DataGrid
+      style={style}
       className='rdg-light tableGrid'
       columns={customColumns}
       rows={rows}

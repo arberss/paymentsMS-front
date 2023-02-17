@@ -1,5 +1,5 @@
 import Table from '@/components/Table/Table';
-import { PaymentsMapper } from '@/mappers/Payments/PaymentsMapper';
+import { PaymentsMapper } from '@/mappers/PaymentsMapper';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   setModalOpen,
@@ -15,7 +15,7 @@ const UserPayments = () => {
   } = useAppSelector((state) => state.payments);
 
   const { columns, rows } = PaymentsMapper({
-    payments: userPayments ? [userPayments] : [],
+    data: userPayments ? [userPayments] : [],
   });
 
   const handleClose = () => {

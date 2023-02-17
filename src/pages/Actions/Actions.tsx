@@ -2,12 +2,13 @@ import Loader from '@/components/Loader/Loader';
 import NavbarHeader from '@/components/Navbar/NavbarHeader';
 import Table, { columnRowType } from '@/components/Table/Table';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
-import { ActionMappers } from '@/mappers/Actions/ActionsMapper';
+import { ActionMappers } from '@/mappers/ActionsMapper';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { getActions } from '@/store/slices/actions/actionsSlice';
 import { actionsEnum } from '@/types/enums/typeEnum';
 import { useEffect, useState } from 'react';
-import AddAction from './Create/AddAction';
+import GeneralCalculations from './components/GeneralCalculations';
+import AddAction from './create/AddAction';
 
 const Actions = () => {
   const dispatch = useAppDispatch();
@@ -20,16 +21,17 @@ const Actions = () => {
     undefined
   );
 
-  const { rows, columns } = ActionMappers(actions, clickedRowId);
+  const { rows, columns, bottomRows } = ActionMappers({
+    data: actions,
+    clickedRowId,
+  });
 
   useEffect(() => {
     dispatch(getActions());
   }, []);
 
   const onRowClick = (column: columnRowType, row: columnRowType) => {
-    if (row.key === 'user') {
-      setClickedRowId(column.invoiceNr);
-    }
+    setClickedRowId(column.invoiceNr);
   };
 
   const handleModal = (value: actionsEnum | null) => {
@@ -58,6 +60,7 @@ const Actions = () => {
         onRowClick={onRowClick}
         exports={{ excel: true, pdf: true }}
       />
+      <GeneralCalculations data={bottomRows} />
       <AddAction
         title='Shto veprim'
         isOpen={Boolean(actionModal)}
