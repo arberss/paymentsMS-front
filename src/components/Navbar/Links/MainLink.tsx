@@ -26,17 +26,21 @@ function MainLink({ icon, color, label, to, onClick }: MainLinkProps) {
             backgroundColor:
               theme.colorScheme === 'dark'
                 ? theme.colors.dark[6]
-                : theme.colors.gray[1],
+                : 'rgba(165, 216, 255, 0.1)',
           },
         })}
         onClick={onClick}
       >
         <Group>
-          <ThemeIcon color={color} variant='light'>
+          <ThemeIcon
+            color={color}
+            variant='light'
+            sx={(theme) => ({ border: `1px solid ${theme.colors.cyan[1]}` })}
+          >
             {icon}
           </ThemeIcon>
 
-          <Text sx={{fontSize: 15, letterSpacing: 0.2}}>{label}</Text>
+          <Text sx={{ fontSize: 15, letterSpacing: 0.2 }}>{label}</Text>
         </Group>
       </UnstyledButton>
     </NavLink>

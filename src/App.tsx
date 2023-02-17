@@ -7,6 +7,9 @@ import { checkLogin, logout } from '@/store/slices/auth/loginSlice';
 import { ToastContainer } from 'react-toastify';
 import RoutesComponent from './routes/Routes';
 import { getStatuses } from './store/slices/statuses/statusesSlice';
+import moment from 'moment';
+import 'moment/dist/locale/sq';
+moment.locale('sq');
 
 function App() {
   const dispatch = useAppDispatch();

@@ -1,3 +1,4 @@
+import Actions from '@/pages/Actions/Actions';
 import Register from '@/pages/Auth/Register/Register';
 import Dashboard from '@/pages/Dashboard/Dashboard';
 import Payments from '@/pages/Payments/Payments';
@@ -22,6 +23,7 @@ const RoutesComponent = () => {
       >
         <Route path='payments' element={<Payments />} />
         <Route path='statuses' element={<Statuses />} />
+        <Route path='actions' element={<Actions />} />
       </Route>
 
       {!decodedToken && (

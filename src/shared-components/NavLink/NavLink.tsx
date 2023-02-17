@@ -18,7 +18,7 @@ const NavLink = ({ to, children }: NavLinkProps) => {
     <NavLinkRouter
       to={to}
       style={({ isActive }) =>
-        isActive ? { ...style, backgroundColor: '#f1f3f8' } : style
+        isActive ? { ...style, backgroundColor: 'rgba(165, 216, 255, 0.2)', borderBottom: 'none' } : style
       }
     >
       {children}
