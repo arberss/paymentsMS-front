@@ -33,7 +33,6 @@ type InitialValuesType = IPayment & {
 
 const initialValues: InitialValuesType = {
   userId: '',
-  type: typeEnum.income,
   reason: '',
   paymentDate: moment().toDate(),
   payedForYear: Number(moment().year()),
@@ -41,7 +40,6 @@ const initialValues: InitialValuesType = {
   amount: 0,
   payer: '',
   paymentReceiver: '',
-  nrOfPersons: 1,
 };
 
 const AddPayment = ({
@@ -109,7 +107,7 @@ const AddPayment = ({
     >
       <form onSubmit={formik.handleSubmit}>
         <Grid sx={{ margin: '10px 0' }} gutter='md'>
-          <Grid.Col xs={12} sm={12} md={12}>
+          <Grid.Col xs={12} sm={6} md={6}>
             <Select
               name='userId'
               label='Zgjedh personin'
@@ -128,17 +126,6 @@ const AddPayment = ({
                   opacity: '0.8 !important',
                 },
               }}
-            />
-          </Grid.Col>
-          <Grid.Col xs={12} sm={6} md={6}>
-            <Select
-              name='type'
-              label='Tipi'
-              data={typeSelector}
-              onChange={(value: string) => formik.setFieldValue('type', value)}
-              value={formik.values.type}
-              error={formik.errors.type as string}
-              disabled={true}
             />
           </Grid.Col>
           <Grid.Col xs={12} sm={6} md={6}>
@@ -220,18 +207,6 @@ const AddPayment = ({
               onChange={formik.handleChange}
               value={formik.values.paymentReceiver}
               error={formik.errors.paymentReceiver as string}
-            />
-          </Grid.Col>
-          <Grid.Col xs={12} sm={6} md={6}>
-            <NumberInput
-              name='nrOfPersons'
-              label='Numri i personave'
-              onChange={(value: number) =>
-                formik.setFieldValue('nrOfPersons', value)
-              }
-              value={formik.values.nrOfPersons}
-              error={formik.errors.nrOfPersons as string}
-              hideControls={false}
             />
           </Grid.Col>
         </Grid>
