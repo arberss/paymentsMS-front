@@ -59,7 +59,8 @@ const Actions = () => {
         rows={rows ?? []}
         onRowClick={onRowClick}
         exports={{ excel: true, pdf: true }}
-        options={{tableTitle: "Hyrjet dhe daljet ne buxhet"}}
+        options={{ tableTitle: 'Hyrjet dhe daljet ne buxhet' }}
+        style={{ blockSize: 500 }}
       />
       <GeneralCalculations data={bottomRows} />
       <AddAction
