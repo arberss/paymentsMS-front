@@ -1,3 +1,4 @@
+import { currencyEnums } from '@/types/enums/typeEnum';
 import * as Yup from 'yup';
 
 export const validationSchema = Yup.object({
@@ -11,6 +12,21 @@ export const validationSchema = Yup.object({
     .required('Ploteso fushen'),
   payedForMonth: Yup.number().required('Ploteso fushen'),
   exchange: Yup.string().required('Ploteso fushen'),
+  otherCurrency: Yup.string().test(
+    'checkOtherValue',
+    'Ploteso fushen',
+    (value, ctx) => {
+      if (
+        currencyEnums[
+          ctx.parent.currency as unknown as keyof typeof currencyEnums
+        ] === currencyEnums.other &&
+        !value?.trim()
+      )
+        return false;
+
+      return true;
+    }
+  ),
   currency: Yup.string().required('Ploteso fushen'),
   invoiceNr: Yup.string().required('Ploteso fushen'),
   amount: Yup.number()

@@ -21,11 +21,7 @@ interface AddActionProps {
   action: actionsEnum;
 }
 
-type initialValuesTypes = IAction & {
-  otherCurrency?: string;
-};
-
-const initialValues: initialValuesTypes = {
+const initialValues: IAction = {
   user: '',
   type: typeEnum.income,
   reason: '',

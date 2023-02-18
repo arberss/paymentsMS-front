@@ -19,6 +19,9 @@ export const addAction = createAsyncThunk(
       exchange: payload.values.exchange.toString(),
       payedForYear: Number(payload.values.payedForYear),
       payedForMonth: Number(payload.values.payedForMonth),
+      currency: payload.values?.otherCurrency
+        ? payload.values.otherCurrency
+        : payload.values.currency,
     };
     try {
       const response = await axios.post('/actions', data);

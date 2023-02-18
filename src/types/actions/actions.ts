@@ -6,6 +6,7 @@ export interface IAction {
   amount: number;
   exchange: string;
   currency: string;
+  otherCurrency?: string;
   invoiceNr: string;
   nrOfPersons: number;
   payedForYear: number;

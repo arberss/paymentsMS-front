@@ -239,6 +239,10 @@ export const ActionMappers = ({
       payedForMonth: moment().month(2).format('MMMM'),
       amount: `${action.amount} ${
         currencyEnums[action.currency as unknown as keyof typeof currencyEnums]
+          ? currencyEnums[
+              action.currency as unknown as keyof typeof currencyEnums
+            ]
+          : action.currency
       }`,
     };
   });
