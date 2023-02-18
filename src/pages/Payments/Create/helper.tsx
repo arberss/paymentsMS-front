@@ -23,7 +23,6 @@ export const usersOptions = (users: {}[]) => {
 
 export const validationSchema = Yup.object({
   userId: Yup.string().required('Ploteso fushen'),
-  type: Yup.string().required('Ploteso fushen'),
   reason: Yup.string().required('Ploteso fushen'),
   paymentDate: Yup.string().required('Ploteso fushen'),
   payedForYear: Yup.number()
@@ -36,5 +35,4 @@ export const validationSchema = Yup.object({
     .required('Ploteso fushen'),
   payer: Yup.string().required('Ploteso fushen'),
   paymentReceiver: Yup.string().required('Ploteso fushen'),
-  nrOfPersons: Yup.number().min(1, 'Ploteso fushen').required('Ploteso fushen'),
 });

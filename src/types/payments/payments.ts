@@ -5,13 +5,11 @@ export interface IPayment {
   amount: number;
   exchange: string;
   householdHeader?: string;
-  nrOfPersons: number;
   payedForYear: number;
   payer: string;
   paymentDate: Date;
   paymentReceiver: string;
   reason: string;
-  type: string;
 }
 
 export interface IPaymentsUser {
