@@ -2,75 +2,58 @@ import DatePicker from '@/shared-components/Form/DatePicker/DatePicker';
 import Input from '@/shared-components/Form/Input/Input';
 import NumberInput from '@/shared-components/Form/Input/NumberInput';
 import Select from '@/shared-components/Form/Select/Select';
-import { Button, Grid, Modal } from '@mantine/core';
-import { FormikValues, useFormik } from 'formik';
+import { Button, Flex, Grid, Modal } from '@mantine/core';
+import { useFormik } from 'formik';
 import moment from 'moment';
-import { typeSelector, usersOptions, validationSchema } from './helper';
-import { actionsEnum, typeEnum } from '@/types/enums/typeEnum';
+import { actionsEnum, currencyEnums, typeEnum } from '@/types/enums/typeEnum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {
-  addPayment,
-  editPayment,
-} from '@/store/slices/payments/addPaymentSlice';
-import { IPayment } from '@/types/payments/payments';
-import { deletePayment } from '@/store/slices/payments/deletePaymentSlice';
 import Loader from '@/components/Loader/Loader';
-import { useState } from 'react';
-import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
-import { getYears } from '@/utils/general';
+import { IAction } from '@/types/actions/actions';
+import { validationSchema } from '../helper';
+import { typeSelector } from '@/pages/Payments/create/helper';
+import { getCurrencies, getMonths, getYears } from '@/utils/general';
+import { addAction } from '@/store/slices/actions/addActionSlice';
 
-interface AddPaymentProps {
+interface AddActionProps {
   title: string;
   isOpen: boolean;
   onClose: () => void;
   action: actionsEnum;
-  selectedPayment: FormikValues | null;
 }
 
-type InitialValuesType = IPayment & {
-  userId: string;
-};
-
-const initialValues: InitialValuesType = {
-  userId: '',
+const initialValues: IAction = {
+  user: '',
   type: typeEnum.income,
   reason: '',
+  description: '',
   paymentDate: moment().toDate(),
   payedForYear: Number(moment().year()),
+  payedForMonth: Number(moment().month() + 1),
   exchange: '',
+  currency: currencyEnums.euro,
+  otherCurrency: '',
   amount: 0,
+  invoiceNr: '',
   payer: '',
   paymentReceiver: '',
   nrOfPersons: 1,
 };
 
-const AddPayment = ({
-  title,
-  isOpen,
-  onClose,
-  action,
-  selectedPayment,
-}: AddPaymentProps) => {
+const AddAction = ({ title, isOpen, onClose, action }: AddActionProps) => {
   const dispatch = useAppDispatch();
   const {
-    users: { users },
-  } = useAppSelector((state) => state.users);
-  const {
-    addPayment: { loading },
-    deletePayment: { loading: deleteLoading },
-  } = useAppSelector((state) => state.payments);
-
-  const [confirmModal, setConfirmModal] = useState<boolean>(false);
+    addAction: { loading },
+  } = useAppSelector((state) => state.actions);
 
   const actionValues = {
     [actionsEnum.add]: {
       initialValues,
     },
     [actionsEnum.edit]: {
-      initialValues: { ...initialValues, ...selectedPayment },
+      initialValues,
     },
     [actionsEnum.emptyEdit]: {
-      initialValues: { ...initialValues, ...selectedPayment },
+      initialValues,
     },
   };
 
@@ -79,23 +62,19 @@ const AddPayment = ({
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values) => {
-      if ([actionsEnum.add, actionsEnum.emptyEdit].includes(action)) {
-        dispatch(addPayment({ values, userId: formik.values.userId }));
-      } else {
-        dispatch(editPayment({ values, userId: formik.values.userId }));
+      try {
+        const result: { [key: string]: any } = await dispatch(
+          addAction({ values })
+        );
+
+        if (!result?.error) {
+          onClose();
+        }
+      } catch (error) {
+        return error;
       }
     },
   });
-
-  const handleDelete = () => {
-    dispatch(
-      deletePayment({
-        userId: formik.values.userId,
-        paymentId: selectedPayment?._id,
-      })
-    );
-    setConfirmModal(false);
-  };
 
   return (
     <Modal
@@ -109,25 +88,13 @@ const AddPayment = ({
     >
       <form onSubmit={formik.handleSubmit}>
         <Grid sx={{ margin: '10px 0' }} gutter='md'>
-          <Grid.Col xs={12} sm={12} md={12}>
-            <Select
-              name='userId'
-              label='Zgjedh personin'
-              data={usersOptions(users)}
-              onChange={(value: string) =>
-                formik.setFieldValue('userId', value)
-              }
-              value={formik.values.userId}
-              error={formik.errors.userId as string}
-              disabled={[actionsEnum.edit, actionsEnum.emptyEdit].includes(
-                action
-              )}
-              sx={{
-                '& :disabled': {
-                  color: '#000 !important',
-                  opacity: '0.8 !important',
-                },
-              }}
+          <Grid.Col xs={12} sm={6} md={6}>
+            <Input
+              name='user'
+              label='Personi/Kompania/Tjeter'
+              onChange={formik.handleChange}
+              value={formik.values.user}
+              error={formik.errors.user as string}
             />
           </Grid.Col>
           <Grid.Col xs={12} sm={6} md={6}>
@@ -138,7 +105,6 @@ const AddPayment = ({
               onChange={(value: string) => formik.setFieldValue('type', value)}
               value={formik.values.type}
               error={formik.errors.type as string}
-              disabled={true}
             />
           </Grid.Col>
           <Grid.Col xs={12} sm={6} md={6}>
@@ -148,6 +114,15 @@ const AddPayment = ({
               onChange={formik.handleChange}
               value={formik.values.reason}
               error={formik.errors.reason as string}
+            />
+          </Grid.Col>
+          <Grid.Col xs={12} sm={6} md={6}>
+            <Input
+              name='description'
+              label='Pershkrimi'
+              onChange={formik.handleChange}
+              value={formik.values.description}
+              error={formik.errors.description as string}
             />
           </Grid.Col>
           <Grid.Col xs={12} sm={6} md={6}>
@@ -175,7 +150,20 @@ const AddPayment = ({
               value={String(formik.values.payedForYear)}
               error={formik.errors.payedForYear as string}
               searchable
-              disabled={[actionsEnum.emptyEdit].includes(action)}
+            />
+          </Grid.Col>
+          <Grid.Col xs={12} sm={6} md={6}>
+            <Select
+              name='payedForMonth'
+              label='Paguaj për muajin'
+              placeholder='Paguaj për muajin'
+              data={getMonths()}
+              onChange={(value: string) =>
+                formik.setFieldValue('payedForMonth', Number(value))
+              }
+              value={String(formik.values.payedForMonth)}
+              error={formik.errors.payedForMonth as string}
+              searchable
             />
           </Grid.Col>
           <Grid.Col xs={12} sm={6} md={6}>
@@ -190,6 +178,33 @@ const AddPayment = ({
               type='text'
               precision={2}
             />
+          </Grid.Col>
+          <Grid.Col xs={12} sm={6} md={6}>
+            <Flex direction='row' gap='xs'>
+              <Select
+                name='currency'
+                label='Monedha'
+                data={getCurrencies()}
+                onChange={(value: string) =>
+                  formik.setFieldValue('currency', value)
+                }
+                value={formik.values.currency}
+                error={formik.errors.currency as string}
+                sx={{ flex: 1 }}
+              />
+              {currencyEnums[
+                formik.values.currency as unknown as keyof typeof currencyEnums
+              ] === currencyEnums.other && (
+                <Input
+                  name='otherCurrency'
+                  label='Shkruaj monedhën'
+                  onChange={formik.handleChange}
+                  value={formik.values.otherCurrency}
+                  error={formik.errors.otherCurrency as string}
+                  sx={{ flex: 1 }}
+                />
+              )}
+            </Flex>
           </Grid.Col>
           <Grid.Col xs={12} sm={6} md={6}>
             <NumberInput
@@ -223,6 +238,15 @@ const AddPayment = ({
             />
           </Grid.Col>
           <Grid.Col xs={12} sm={6} md={6}>
+            <Input
+              name='invoiceNr'
+              label='Nr.i fakturës'
+              onChange={formik.handleChange}
+              value={formik.values.invoiceNr}
+              error={formik.errors.invoiceNr as string}
+            />
+          </Grid.Col>
+          <Grid.Col xs={12} sm={6} md={6}>
             <NumberInput
               name='nrOfPersons'
               label='Numri i personave'
@@ -235,16 +259,6 @@ const AddPayment = ({
             />
           </Grid.Col>
         </Grid>
-        {action === actionsEnum.edit && (
-          <Button
-            sx={{ width: '100%', marginTop: 10, fontSize: 16 }}
-            variant='outline'
-            color='red'
-            onClick={() => setConfirmModal(true)}
-          >
-            Fshij
-          </Button>
-        )}
         <Button
           type='submit'
           sx={{ width: '100%', marginTop: 10, fontSize: 16 }}
@@ -252,15 +266,9 @@ const AddPayment = ({
           {action === actionsEnum.add ? 'Shto' : 'Ndrysho'}
         </Button>
       </form>
-      <ConfirmModal
-        isOpen={confirmModal}
-        onClose={() => setConfirmModal(false)}
-        onConfirm={() => handleDelete()}
-        description={`A jeni i sigurt qe deshironi ta fshini pagesen per vitin ${formik.values.payedForYear}?`}
-      />
-      {(loading || deleteLoading) && <Loader position='absolute' backdrop />}
+      {loading && <Loader position='absolute' backdrop />}
     </Modal>
   );
 };
 
-export default AddPayment;
+export default AddAction;

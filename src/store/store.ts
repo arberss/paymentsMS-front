@@ -1,4 +1,4 @@
-import addStatusSlice, { addStatus } from './slices/statuses/addStatusSlice';
+import addStatusSlice from './slices/statuses/addStatusSlice';
 import statusesSlice from './slices/statuses/statusesSlice';
 import addPaymentSlice from './slices/payments/addPaymentSlice';
 import paymentsSlice from './slices/payments/paymentsSlice';
@@ -8,6 +8,8 @@ import registerSlice from './slices/auth/registerSlice';
 import usersSlice from './slices/user/usersSlice';
 import userPaymentsSlice from './slices/payments/userPaymentsSlice';
 import deletePaymentSlice from './slices/payments/deletePaymentSlice';
+import actionsSlice from './slices/actions/actionsSlice';
+import addActionSlice from './slices/actions/addActionSlice';
 
 export const store = configureStore({
   reducer: {
@@ -27,6 +29,10 @@ export const store = configureStore({
     statuses: combineReducers({
       statuses: statusesSlice,
       addStatus: addStatusSlice,
+    }),
+    actions: combineReducers({
+      actions: actionsSlice,
+      addAction: addActionSlice,
     }),
   },
   middleware: (getDefaultMiddleware) =>

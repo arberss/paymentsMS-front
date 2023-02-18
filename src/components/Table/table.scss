@@ -2,7 +2,7 @@
   font-size: 15px;
 
   .rdg-cell {
-    padding: 0 5px;
+    padding: 0 10px;
 
     &:has(.tableGrid__row) {
       padding: 0;
@@ -10,7 +10,7 @@
   }
 
   &__row {
-    padding: 0 5px;
+    padding: 0 10px;
 
     &--empty {
       height: 100%;
@@ -20,6 +20,11 @@
     &--clicked {
       background-color: rgb(241, 244, 254);
     }
+  }
+
+  .rdg-bottom-summary-row {
+    font-family: 'Roboto';
+    font-weight: 900;
   }
 
   &__actions {

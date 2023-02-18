@@ -1,28 +1,17 @@
+import TableSelectedColumn from '@/components/Table/components/TableSelectedColumn/TableSelectedColumn';
 import { columnRowType } from '@/components/Table/Table';
-import PaymentColumn from '@/pages/Payments/PaymentColumn';
+import { IMapperProps, IMapperValues } from '@/types/mappers/mappers';
 import { IPayment, IPaymentsUser } from '@/types/payments/payments';
 import { IUser } from '@/types/user/user';
 import moment from 'moment';
 
 type PaymentsType = IPaymentsUser & { _id: string };
 
-interface IPaymentsMapper {
-  payments: PaymentsType[];
-  clickedRowId?: string;
-  showFooterTotal?: boolean;
-}
-
-interface PaymentsMapperValues {
-  columns: { key: string; name: string; [key: string]: any }[];
-  rows: { key: string; [key: string]: any }[];
-  bottomRows?: { key: string; [key: string]: string | number };
-}
-
 export const PaymentsMapper = ({
-  payments,
+  data: payments,
   clickedRowId,
   showFooterTotal = true,
-}: IPaymentsMapper): PaymentsMapperValues => {
+}: IMapperProps<PaymentsType[]>): IMapperValues => {
   const staticColumns: { key: string; name: string; [key: string]: any }[] = [
     {
       key: 'name',
@@ -40,7 +29,11 @@ export const PaymentsMapper = ({
         column: columnRowType;
         row: columnRowType;
       }) => (
-        <PaymentColumn clickedRowId={clickedRowId} column={column} row={row} />
+        <TableSelectedColumn
+          clickedRowId={clickedRowId}
+          value={row?.[column?.key]}
+          uniqueKey={row.userPaymentsId}
+        />
       ),
       summaryFormatter() {
         return <>Totali</>;
@@ -48,7 +41,7 @@ export const PaymentsMapper = ({
     },
     {
       key: 'personalNumber',
-      name: 'Numri Personal',
+      name: 'Numri personal',
       width: 150,
       resizable: true,
       headerRenderer: ({ column }: { column: columnRowType }) => (
@@ -61,7 +54,11 @@ export const PaymentsMapper = ({
         column: columnRowType;
         row: columnRowType;
       }) => (
-        <PaymentColumn clickedRowId={clickedRowId} column={column} row={row} />
+        <TableSelectedColumn
+          clickedRowId={clickedRowId}
+          value={row?.[column?.key]}
+          uniqueKey={row.userPaymentsId}
+        />
       ),
     },
     {
@@ -79,7 +76,11 @@ export const PaymentsMapper = ({
         column: columnRowType;
         row: columnRowType;
       }) => (
-        <PaymentColumn clickedRowId={clickedRowId} column={column} row={row} />
+        <TableSelectedColumn
+          clickedRowId={clickedRowId}
+          value={row?.[column?.key]}
+          uniqueKey={row.userPaymentsId}
+        />
       ),
     },
   ];
@@ -101,10 +102,10 @@ export const PaymentsMapper = ({
           column: columnRowType;
           row: columnRowType;
         }) => (
-          <PaymentColumn
+          <TableSelectedColumn
             clickedRowId={clickedRowId}
-            column={column}
-            row={row}
+            value={row?.[column?.key]}
+            uniqueKey={row.userPaymentsId}
           />
         ),
         summaryFormatter({
@@ -155,7 +156,11 @@ export const PaymentsMapper = ({
         column: columnRowType;
         row: columnRowType;
       }) => (
-        <PaymentColumn clickedRowId={clickedRowId} column={column} row={row} />
+        <TableSelectedColumn
+          clickedRowId={clickedRowId}
+          value={row?.[column?.key]}
+          uniqueKey={row.userPaymentsId}
+        />
       ),
       summaryFormatter({
         row,
@@ -235,7 +240,7 @@ export const calculateYearTotal = (data: IPaymentsUser[]) => {
     isFooter: true,
   };
 
-  data.forEach((payment: IPaymentsUser) => {
+  data?.forEach((payment: IPaymentsUser) => {
     payment.payments.forEach((item) => {
       years[item.payedForYear] =
         years[item.payedForYear] + item.amount || item.amount;

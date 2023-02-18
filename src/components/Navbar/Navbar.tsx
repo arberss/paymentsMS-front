@@ -1,6 +1,6 @@
 import { Navbar as MantineNavbar } from '@mantine/core';
-import { linkData, LinkDataProps } from './Links/helper';
-import MainLinks from './Links/MainLinks';
+import { linkData, LinkDataProps } from './links/helper';
+import MainLinks from './links/MainLinks';
 import NavbarHeader from './NavbarHeader';
 import { IconLogout } from '@tabler/icons-react';
 import { useAppDispatch } from '@/store/hooks';

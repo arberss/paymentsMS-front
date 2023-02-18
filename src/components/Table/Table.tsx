@@ -1,7 +1,8 @@
 import DataGrid from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
-import ColumnActions, { Actions } from './Actions/TableActions';
-import ExportActions from './Export/ExportActions';
+import ColumnActions, { Actions } from './actions/TableActions';
+import TableHeader from './components/TableHeader/TableHeader';
+import ExportActions from './export/ExportActions';
 import './table.scss';
 
 export type columnRowType = { [key: string]: any };
@@ -14,6 +15,7 @@ interface TableProps {
   exports?: { pdf?: boolean; excel?: boolean; csv?: boolean };
   actions?: (({ rowData }: { rowData?: { [key: string]: any } }) => Actions)[];
   options?: {
+    tableTitle?: string;
     actionColumn?: {
       frozen?: boolean;
       width?: number;
@@ -21,6 +23,7 @@ interface TableProps {
     };
   };
   bottomRows?: { key: string; [key: string]: string | number }[] | null;
+  style?: React.CSSProperties;
 }
 
 const Table = ({
@@ -31,7 +34,8 @@ const Table = ({
   exports,
   actions,
   options,
-  bottomRows
+  bottomRows,
+  style,
 }: TableProps) => {
   let customColumns = [...columns];
 
@@ -60,18 +64,20 @@ const Table = ({
 
   const gridElement = (
     <DataGrid
+      style={style}
       className='rdg-light tableGrid'
       columns={customColumns}
       rows={rows}
       onRowDoubleClick={onRowDoubleClick}
       onRowClick={onRowClick}
       bottomSummaryRows={bottomRows}
+      rowHeight={45}
     />
   );
 
   return (
     <>
-      {exports && <ExportActions table={gridElement} exports={exports} />}
+      <TableHeader table={gridElement} options={{exports, title: options?.tableTitle}} />
       {gridElement}
     </>
   );

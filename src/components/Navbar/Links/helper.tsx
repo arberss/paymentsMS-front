@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconCash, IconHierarchy2 } from '@tabler/icons-react';
+import { IconActivity, IconCash, IconHierarchy2 } from '@tabler/icons-react';
 
 export interface LinkDataProps {
   icon: JSX.Element;
@@ -21,5 +21,11 @@ export const linkData: LinkDataProps[] = [
     color: 'blue',
     label: 'Statuset',
     to: '/dashboard/statuses',
+  },
+  {
+    icon: <IconActivity size={20} />,
+    color: 'blue',
+    label: 'Veprimet',
+    to: '/dashboard/actions',
   },
 ];
