@@ -27,7 +27,7 @@ const Statuses = () => {
     <>
       <NavbarHeader title='Statuset' color='dark' />
       <TableTopActions
-        title='Shto Status'
+        title='Shto status'
         onClick={() => handleModal()}
         sx={{ marginBottom: 10 }}
       />
@@ -37,7 +37,7 @@ const Statuses = () => {
         exports={{ excel: true, pdf: true }}
       />
       <AddStatus
-        title='Shto Status'
+        title='Shto status'
         onClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
         action={StatusActionType.add}

@@ -50,7 +50,7 @@ const Actions = () => {
     <>
       <NavbarHeader title='Veprimet' color='dark' />
       <TableTopActions
-        title='Shto Veprim'
+        title='Shto veprim'
         onClick={() => handleModal(actionsEnum.add)}
         sx={{ marginBottom: 10 }}
       />
@@ -59,6 +59,7 @@ const Actions = () => {
         rows={rows ?? []}
         onRowClick={onRowClick}
         exports={{ excel: true, pdf: true }}
+        options={{tableTitle: "Hyrjet dhe daljet ne buxhet"}}
       />
       <GeneralCalculations data={bottomRows} />
       <AddAction

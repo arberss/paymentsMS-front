@@ -1,6 +1,7 @@
 import DataGrid from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import ColumnActions, { Actions } from './actions/TableActions';
+import TableHeader from './components/TableHeader/TableHeader';
 import ExportActions from './export/ExportActions';
 import './table.scss';
 
@@ -14,6 +15,7 @@ interface TableProps {
   exports?: { pdf?: boolean; excel?: boolean; csv?: boolean };
   actions?: (({ rowData }: { rowData?: { [key: string]: any } }) => Actions)[];
   options?: {
+    tableTitle?: string;
     actionColumn?: {
       frozen?: boolean;
       width?: number;
@@ -33,7 +35,7 @@ const Table = ({
   actions,
   options,
   bottomRows,
-  style
+  style,
 }: TableProps) => {
   let customColumns = [...columns];
 
@@ -69,12 +71,13 @@ const Table = ({
       onRowDoubleClick={onRowDoubleClick}
       onRowClick={onRowClick}
       bottomSummaryRows={bottomRows}
+      rowHeight={45}
     />
   );
 
   return (
     <>
-      {exports && <ExportActions table={gridElement} exports={exports} />}
+      <TableHeader table={gridElement} options={{exports, title: options?.tableTitle}} />
       {gridElement}
     </>
   );

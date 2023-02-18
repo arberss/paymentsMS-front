@@ -41,7 +41,7 @@ export const PaymentsMapper = ({
     },
     {
       key: 'personalNumber',
-      name: 'Numri Personal',
+      name: 'Numri personal',
       width: 150,
       resizable: true,
       headerRenderer: ({ column }: { column: columnRowType }) => (

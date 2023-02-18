@@ -82,6 +82,7 @@ const GeneralCalculations = ({ data }: GeneralCalculationsProps) => {
         bottomRows={[total]}
         exports={{ excel: true, pdf: true }}
         style={{ blockSize: 'unset' }}
+        options={{tableTitle: "Bilanci i buxhetit"}}
       />
     </div>
   );

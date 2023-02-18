@@ -117,7 +117,7 @@ const Payments = () => {
     <>
       <NavbarHeader title='Pagesat' color='dark' />
       <TableTopActions
-        title='Shto Pagesë'
+        title='Shto pagesë'
         onClick={() => handleAddPayment(actionsEnum.add)}
         sx={{ marginBottom: 10 }}
       />
@@ -137,12 +137,13 @@ const Payments = () => {
         bottomRows={
           [bottomRows] as { [key: string]: string | number; key: string }[]
         }
+        style={{ blockSize: 'unset' }}
       />
       <AddPayment
         title={
           openPaymentModal === actionsEnum.add
-            ? 'Shto Pagesë'
-            : 'Ndrysho Pagesën'
+            ? 'Shto pagesë'
+            : 'Ndrysho pagesën'
         }
         isOpen={Boolean(openPaymentModal)}
         onClose={handleCloseModal}
