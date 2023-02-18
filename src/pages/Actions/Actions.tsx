@@ -4,7 +4,7 @@ import Table, { columnRowType } from '@/components/Table/Table';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
 import { ActionMappers } from '@/mappers/ActionsMapper';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { getActions } from '@/store/slices/actions/actionsSlice';
+import { getActions, setPage } from '@/store/slices/actions/actionsSlice';
 import { actionsEnum } from '@/types/enums/typeEnum';
 import { useEffect, useState } from 'react';
 import GeneralCalculations from './components/GeneralCalculations';
@@ -13,7 +13,11 @@ import AddAction from './create/AddAction';
 const Actions = () => {
   const dispatch = useAppDispatch();
   const {
-    actions: { actions, loading },
+    actions: {
+      actions,
+      loading,
+      pagination: { page, size, totalPages },
+    },
   } = useAppSelector((state) => state.actions);
 
   const [actionModal, setActionModal] = useState<actionsEnum | null>(null);
@@ -26,9 +30,21 @@ const Actions = () => {
     clickedRowId,
   });
 
+  const tableOptions = {
+    tableTitle: 'Hyrjet dhe daljet ne buxhet',
+    pagination: {
+      activePage: page,
+      size,
+      totalPages,
+      onChange: (selectedNumber: number) => {
+        dispatch(setPage(selectedNumber));
+      },
+    },
+  };
+
   useEffect(() => {
-    dispatch(getActions());
-  }, []);
+    dispatch(getActions({ pagination: { page, size } }));
+  }, [page]);
 
   const onRowClick = (column: columnRowType, row: columnRowType) => {
     setClickedRowId(column.invoiceNr);
@@ -59,8 +75,8 @@ const Actions = () => {
         rows={rows ?? []}
         onRowClick={onRowClick}
         exports={{ excel: true, pdf: true }}
-        options={{ tableTitle: 'Hyrjet dhe daljet ne buxhet' }}
-        style={{ blockSize: 500 }}
+        options={tableOptions}
+        style={{ blockSize: 400 }}
       />
       <GeneralCalculations data={bottomRows} />
       <AddAction
