@@ -64,13 +64,14 @@ export const actionsSlice = createSlice({
           data: { data: IAction[]; pagination: IPagination };
         }>
       ) => {
+        const initState = current(state);
         state.loading = false;
         state.actions = action.payload.data.data;
-        state.pagination = {
+        state.pagination = action.payload.data?.pagination ? {
           page: action.payload.data.pagination.page,
           size: action.payload.data.pagination.size,
-          totalPages: action.payload.data.pagination.totalPages,
-        };
+          totalPages: action.payload.data?.pagination.totalPages,
+        } : initState.pagination;
       }
     );
     builder.addCase(getActions.rejected, (state) => {
