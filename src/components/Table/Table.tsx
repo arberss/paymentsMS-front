@@ -26,6 +26,7 @@ interface TableProps {
       size: number;
       totalPages: number;
       onChange: (value: number) => void;
+      onSizeChange: (value: string) => void;
     };
   };
   bottomRows?: { key: string; [key: string]: string | number }[] | null;
@@ -93,6 +94,7 @@ const Table = ({
         size={options?.pagination?.size}
         totalPages={options?.pagination?.totalPages}
         onChange={options?.pagination?.onChange}
+        onSizeChange={options?.pagination?.onSizeChange}
       />
     </>
   );

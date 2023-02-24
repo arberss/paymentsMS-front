@@ -4,7 +4,11 @@ import Table, { columnRowType } from '@/components/Table/Table';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
 import { ActionMappers } from '@/mappers/ActionsMapper';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { getActions, setPage } from '@/store/slices/actions/actionsSlice';
+import {
+  getActions,
+  setPage,
+  setSize,
+} from '@/store/slices/actions/actionsSlice';
 import { actionsEnum } from '@/types/enums/typeEnum';
 import { useEffect, useState } from 'react';
 import GeneralCalculations from './components/GeneralCalculations';
@@ -39,12 +43,15 @@ const Actions = () => {
       onChange: (selectedNumber: number) => {
         dispatch(setPage(selectedNumber));
       },
+      onSizeChange: (selectedNumber: string) => {
+        dispatch(setSize(+selectedNumber));
+      },
     },
   };
 
   useEffect(() => {
     dispatch(getActions({ pagination: { page, size } }));
-  }, [page]);
+  }, [page, size]);
 
   const onRowClick = (column: columnRowType, row: columnRowType) => {
     setClickedRowId(column.invoiceNr);

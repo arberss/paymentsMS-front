@@ -19,6 +19,7 @@ export interface RegisterFormData {
   confirmPassword: string;
   personalNumber: string;
   status: string;
+  role?: string;
 }
 
 const Register = () => {
@@ -44,6 +45,7 @@ const Register = () => {
     confirmPassword: '',
     personalNumber: '',
     status: '',
+    role: ''
   };
 
   const formik = useFormik({

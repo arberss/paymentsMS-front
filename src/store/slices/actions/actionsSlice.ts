@@ -51,6 +51,9 @@ export const actionsSlice = createSlice({
     setPage: (state, action: PayloadAction<number>) => {
       state.pagination.page = action.payload;
     },
+    setSize: (state, action: PayloadAction<number>) => {
+      state.pagination.size = +action.payload;
+    },
   },
   extraReducers(builder) {
     builder.addCase(getActions.pending, (state) => {
@@ -67,11 +70,13 @@ export const actionsSlice = createSlice({
         const initState = current(state);
         state.loading = false;
         state.actions = action.payload.data.data;
-        state.pagination = action.payload.data?.pagination ? {
-          page: action.payload.data.pagination.page,
-          size: action.payload.data.pagination.size,
-          totalPages: action.payload.data?.pagination.totalPages,
-        } : initState.pagination;
+        state.pagination = action.payload.data?.pagination
+          ? {
+              page: action.payload.data.pagination.page,
+              size: action.payload.data.pagination.size,
+              totalPages: action.payload.data?.pagination.totalPages,
+            }
+          : initState.pagination;
       }
     );
     builder.addCase(getActions.rejected, (state) => {
@@ -89,5 +94,5 @@ export const actionsSlice = createSlice({
   },
 });
 
-export const { setPage } = actionsSlice.actions;
+export const { setPage, setSize } = actionsSlice.actions;
 export default actionsSlice.reducer;
