@@ -47,7 +47,7 @@ export const paymentsSlice = createSlice({
       getPayments.fulfilled,
       (state, action: PayloadAction<{ data: IPaymentsUser[] }>) => {
         state.loading = false;
-        state.payments = action.payload.data;
+        state.payments = action.payload.data.data;
       }
     );
     builder.addCase(

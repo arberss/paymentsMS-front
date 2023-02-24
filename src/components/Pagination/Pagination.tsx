@@ -1,4 +1,6 @@
-import { Pagination as MantinePagination } from '@mantine/core';
+import Select from '@/shared-components/Form/Select/Select';
+import { Flex, Pagination as MantinePagination } from '@mantine/core';
+import { sizeFilter } from './helper';
 import './pagination.scss';
 
 interface PaginationProps {
@@ -6,6 +8,7 @@ interface PaginationProps {
   size: number | undefined;
   totalPages: number | undefined;
   onChange: ((value: number) => void) | undefined;
+  onSizeChange: ((value: string) => void) | undefined;
 }
 
 const Pagination = ({
@@ -13,18 +16,36 @@ const Pagination = ({
   size,
   totalPages,
   onChange,
+  onSizeChange,
 }: PaginationProps) => {
   if (!totalPages) return null;
 
+  const activePageList = [...sizeFilter];
+
+  if (totalPages > +sizeFilter[sizeFilter.length - 1].value) {
+    activePageList.push({
+      label: 'Te gjitha',
+      value: totalPages.toString(),
+    });
+  }
+
   return (
-    <MantinePagination
-      className='pagination'
-      total={Math.ceil(totalPages / (size ?? 1))}
-      page={activePage}
-      boundaries={1}
-      siblings={0}
-      onChange={onChange}
-    />
+    <Flex className='pagination'>
+      <Select
+        name='size'
+        data={activePageList}
+        onChange={(value) => (onSizeChange ? onSizeChange(value) : null)}
+        value={size?.toString() ?? null}
+        sx={{ width: '15%' }}
+      />
+      <MantinePagination
+        total={Math.ceil(totalPages / (size ?? 1))}
+        page={activePage}
+        boundaries={1}
+        siblings={0}
+        onChange={onChange}
+      />
+    </Flex>
   );
 };
 

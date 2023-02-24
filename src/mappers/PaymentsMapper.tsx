@@ -243,8 +243,8 @@ export const calculateYearTotal = (data: IPaymentsUser[]) => {
   data?.forEach((payment: IPaymentsUser) => {
     payment.payments.forEach((item) => {
       years[item.payedForYear] =
-        years[item.payedForYear] + item.amount || item.amount;
-      years['totalPayed'] = (years['totalPayed'] || 0) + item.amount;
+        years[item.payedForYear] + (item.amount || 0) || (item.amount || 0);
+      years['totalPayed'] = (years['totalPayed'] || 0) + (item.amount || 0);
     });
   });
 
