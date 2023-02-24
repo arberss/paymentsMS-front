@@ -12,22 +12,35 @@ import {
 import { addPayment, editPayment } from './addPaymentSlice';
 import { deletePayment } from './deletePaymentSlice';
 import { paymentUpdater } from './helper';
+import { IPagination } from '@/types/pagination/pagination';
 
 interface PaymentsProps {
   loading: boolean;
   payments: IPaymentsUser[];
+  pagination: IPagination;
 }
 
 const initialState: PaymentsProps = {
   loading: false,
   payments: [],
+  pagination: {
+    page: 1,
+    size: 10,
+    totalPages: 10,
+  },
 };
 
 export const getPayments = createAsyncThunk(
   'payments/get',
-  async (_, { rejectWithValue }) => {
+  async (
+    data: { pagination: { page: number; size: number } },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await axios.post<IPaymentsUser[]>('/payments');
+      const response = await axios.post<{
+        data: IPaymentsUser[];
+        pagination: IPagination;
+      }>(`/payments?page=${data.pagination.page}&size=${data.pagination.size}`);
       return response;
     } catch (error: unknown) {
       return rejectWithValue(returnError(error as { [key: string]: any }));
@@ -38,16 +51,38 @@ export const getPayments = createAsyncThunk(
 export const paymentsSlice = createSlice({
   name: 'payments',
   initialState,
-  reducers: {},
+  reducers: {
+    setPage: (state, action: PayloadAction<number>) => {
+      state.pagination.page = action.payload;
+    },
+    setSize: (state, action: PayloadAction<number>) => {
+      state.pagination.size = +action.payload;
+    },
+  },
   extraReducers(builder) {
     builder.addCase(getPayments.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(
       getPayments.fulfilled,
-      (state, action: PayloadAction<{ data: IPaymentsUser[] }>) => {
+      (
+        state,
+        action: PayloadAction<{
+          data: { data: IPaymentsUser[]; pagination: IPagination };
+        }>
+      ) => {
+        const initState = current(state);
+        console.log('data', action.payload.data);
+
         state.loading = false;
         state.payments = action.payload.data.data;
+        state.pagination = action.payload.data?.pagination
+          ? {
+              page: action.payload.data.pagination.page,
+              size: action.payload.data.pagination.size,
+              totalPages: action.payload.data?.pagination.totalPages,
+            }
+          : initState.pagination;
       }
     );
     builder.addCase(
@@ -116,11 +151,11 @@ export const paymentsSlice = createSlice({
         );
 
         if (userPaymentsIndex !== -1) {
-          const filteredValue = initState.payments[userPaymentsIndex].payments.filter(
-            (userPayment: IPayment) => {
-              return userPayment._id !== action.payload.paymentId;
-            }
-          );
+          const filteredValue = initState.payments[
+            userPaymentsIndex
+          ].payments.filter((userPayment: IPayment) => {
+            return userPayment._id !== action.payload.paymentId;
+          });
           state.payments[userPaymentsIndex].payments = filteredValue;
         }
       }
@@ -128,4 +163,5 @@ export const paymentsSlice = createSlice({
   },
 });
 
+export const { setPage, setSize } = paymentsSlice.actions;
 export default paymentsSlice.reducer;

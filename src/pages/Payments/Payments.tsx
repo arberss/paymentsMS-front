@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import NavbarHeader from '@/components/Navbar/NavbarHeader';
 import Table, { columnRowType } from '@/components/Table/Table';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { getPayments } from '@/store/slices/payments/paymentsSlice';
+import {
+  getPayments,
+  setPage,
+  setSize,
+} from '@/store/slices/payments/paymentsSlice';
 import {
   setPayment,
   setPaymentModalValue,
@@ -27,7 +31,11 @@ import Loader from '@/components/Loader/Loader';
 const Payments = () => {
   const dispatch = useAppDispatch();
   const {
-    payments: { payments, loading },
+    payments: {
+      payments,
+      loading,
+      pagination: { page, size, totalPages },
+    },
     addPayment: { openPaymentModal, payment },
   } = useAppSelector((state) => state.payments);
 
@@ -36,7 +44,10 @@ const Payments = () => {
   );
 
   useEffect(() => {
-    dispatch(getPayments());
+    dispatch(getPayments({ pagination: { page, size } }));
+  }, [page, size]);
+
+  useEffect(() => {
     dispatch(getUsers());
   }, []);
 
@@ -60,6 +71,24 @@ const Payments = () => {
       },
     }),
   ];
+
+  const options = {
+    actionColumn: {
+      frozen: true,
+      width: 20,
+    },
+    pagination: {
+      activePage: page,
+      size,
+      totalPages,
+      onChange: (selectedNumber: number) => {
+        dispatch(setPage(selectedNumber));
+      },
+      onSizeChange: (selectedNumber: string) => {
+        dispatch(setSize(+selectedNumber));
+      },
+    },
+  };
 
   const onRowClick = (column: columnRowType, row: columnRowType) => {
     setClickedRowId(column.userPaymentsId);
@@ -128,12 +157,7 @@ const Payments = () => {
         onRowDoubleClick={onRowDoubleClick}
         exports={{ excel: true, pdf: true }}
         actions={tableActions}
-        options={{
-          actionColumn: {
-            frozen: true,
-            width: 20,
-          },
-        }}
+        options={options}
         bottomRows={
           [bottomRows] as { [key: string]: string | number; key: string }[]
         }
