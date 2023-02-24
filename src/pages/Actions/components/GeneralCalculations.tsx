@@ -56,7 +56,7 @@ const getRows = (data: GeneralCalculationsProps['data']) => {
 
   const result = Object.keys(typeEnum).map((key) => {
     Object.keys(data?.currencies ?? {}).forEach((curr) => {
-      total[curr] = total[curr] - (data?.[key][curr] ?? 0) || (data?.[key][curr] ?? 0);
+      total[curr] = total[curr] - (data?.[key]?.[curr] ?? 0) || (data?.[key][curr] ?? 0);
     });
     return {
       key,

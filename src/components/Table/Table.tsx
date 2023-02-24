@@ -1,8 +1,8 @@
 import DataGrid from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
+import Pagination from '../Pagination/Pagination';
 import ColumnActions, { Actions } from './actions/TableActions';
 import TableHeader from './components/TableHeader/TableHeader';
-import ExportActions from './export/ExportActions';
 import './table.scss';
 
 export type columnRowType = { [key: string]: any };
@@ -20,6 +20,12 @@ interface TableProps {
       frozen?: boolean;
       width?: number;
       position?: 'left' | 'right';
+    };
+    pagination?: {
+      activePage: number;
+      size: number;
+      totalPages: number;
+      onChange: (value: number) => void;
     };
   };
   bottomRows?: { key: string; [key: string]: string | number }[] | null;
@@ -77,8 +83,17 @@ const Table = ({
 
   return (
     <>
-      <TableHeader table={gridElement} options={{exports, title: options?.tableTitle}} />
+      <TableHeader
+        table={gridElement}
+        options={{ exports, title: options?.tableTitle }}
+      />
       {gridElement}
+      <Pagination
+        activePage={options?.pagination?.activePage}
+        size={options?.pagination?.size}
+        totalPages={options?.pagination?.totalPages}
+        onChange={options?.pagination?.onChange}
+      />
     </>
   );
 };
