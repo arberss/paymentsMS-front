@@ -1,6 +1,8 @@
 import NavbarHeader from '@/components/Navbar/NavbarHeader';
 import Table from '@/components/Table/Table';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
+import { endpoints } from '@/config/endpoints';
+import { useQuery } from '@/hooks/useQuery';
 import { useAppSelector } from '@/store/hooks';
 import { StatusActionType } from '@/types/statuses/statuses';
 import { useState } from 'react';
@@ -12,8 +14,15 @@ const columns = [
 ];
 
 const Statuses = () => {
+  const { data: statuses = [] } = useQuery<
+    {
+      [key: string]: string | number | undefined;
+      key: string;
+    }[]
+  >(endpoints.statuses);
+
   const {
-    statuses: { statuses },
+    // statuses: { statuses },
     addStatus: { loading },
   } = useAppSelector((state) => state.statuses);
 

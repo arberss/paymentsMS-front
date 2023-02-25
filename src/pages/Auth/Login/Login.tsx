@@ -3,19 +3,28 @@ import { Button, Flex, PasswordInput, Text } from '@mantine/core';
 import AuthLayout from '@/shared-components/Layouts/Auth/AuthLayout';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { useAppDispatch } from '@/store/hooks';
-import { loginUser } from '@/store/slices/auth/loginSlice';
 import { validationSchema } from './helper';
 import { IconEyeCheck, IconEyeOff } from '@tabler/icons-react';
+import { usePostMutation } from '@/hooks/useMutation';
+import { endpoints } from '@/config/endpoints';
+import AuthContext from '@/context/authContext';
+import { useContext } from 'react';
 
 export interface LoginFormData {
   emailOrPersonalNumber: string;
   password: string;
 }
 
+export interface LoginResponse {
+  id: string;
+  token: string;
+}
+
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { handleLogin } = useContext(AuthContext);
+
+  const postMutation = usePostMutation<LoginResponse>(endpoints.login);
 
   const initialValues: LoginFormData = {
     emailOrPersonalNumber: '',
@@ -27,14 +36,14 @@ const Login = () => {
     validationSchema,
     onSubmit: async (values, formikHelpers) => {
       try {
-        const result: { [key: string]: any } = await dispatch(
-          loginUser({ values })
-        );
+        postMutation.mutate(values, {
+          onSuccess: (data) => {
+            handleLogin(data.token);
 
-        if (!result?.error) {
-          formikHelpers.resetForm();
-          navigate('/dashboard/payments');
-        }
+            formikHelpers.resetForm();
+            navigate('/dashboard/payments');
+          },
+        });
       } catch (error) {
         return error;
       }

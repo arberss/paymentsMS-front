@@ -1,33 +1,36 @@
 import Table from '@/components/Table/Table';
+import PaymentsContext from '@/context/paymentsContext';
 import { PaymentsMapper } from '@/mappers/PaymentsMapper';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {
-  setModalOpen,
-  setUserPayments,
-} from '@/store/slices/payments/userPaymentsSlice';
+import { IPaymentsUser } from '@/types/payments/payments';
 import { Modal } from '@mantine/core';
+import { useContext } from 'react';
 
 const UserPayments = () => {
-  const dispatch = useAppDispatch();
-
   const {
-    userPayments: { isModalOpen, userPayments },
-  } = useAppSelector((state) => state.payments);
+    selectedUser,
+    setSelectedUser,
+    userPaymentModal,
+    setUserPaymentModal,
+  } = useContext(PaymentsContext);
+
+  console.log('selectedUser', selectedUser);
 
   const { columns, rows } = PaymentsMapper({
-    data: userPayments ? [userPayments] : [],
+    data: selectedUser ? [selectedUser] : [],
   });
 
   const handleClose = () => {
-    dispatch(setModalOpen(false));
-    dispatch(setUserPayments(null));
+    setUserPaymentModal(false);
+    setSelectedUser(null);
   };
 
   return (
     <Modal
-      opened={isModalOpen}
+      opened={userPaymentModal}
       size='80%'
-      title={`${userPayments?.user?.firstName} ${userPayments?.user?.lastName}`}
+      title={`${(selectedUser as IPaymentsUser | null)?.user?.firstName} ${
+        (selectedUser as IPaymentsUser | null)?.user?.lastName
+      }`}
       onClose={handleClose}
       closeOnClickOutside={true}
       styles={(theme) => ({

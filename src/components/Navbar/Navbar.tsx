@@ -3,9 +3,9 @@ import { linkData, LinkDataProps } from './links/helper';
 import MainLinks from './links/MainLinks';
 import NavbarHeader from './NavbarHeader';
 import { IconLogout } from '@tabler/icons-react';
-import { useAppDispatch } from '@/store/hooks';
-import { logout } from '@/store/slices/auth/loginSlice';
 import { useNavigate } from 'react-router-dom';
+import AuthContext from '@/context/authContext';
+import { useContext } from 'react';
 
 interface NavbarProps {
   isOpen: boolean;
@@ -13,7 +13,7 @@ interface NavbarProps {
 
 const Navbar = ({ isOpen }: NavbarProps) => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { handleLogout } = useContext(AuthContext);
 
   const linkDataFooter: LinkDataProps[] = [
     {
@@ -22,7 +22,7 @@ const Navbar = ({ isOpen }: NavbarProps) => {
       label: 'Dil',
       to: '/auth/login',
       onClick: () => {
-        dispatch(logout());
+        handleLogout();
         navigate('/auth/login');
       },
     },

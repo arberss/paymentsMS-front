@@ -72,7 +72,6 @@ export const paymentsSlice = createSlice({
         }>
       ) => {
         const initState = current(state);
-        console.log('data', action.payload.data);
 
         state.loading = false;
         state.payments = action.payload.data.data;
