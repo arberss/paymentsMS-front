@@ -81,6 +81,7 @@ const Payments = () => {
       onSizeChange: (selectedNumber: string) => {
         paymentsContext.setPaginations({
           ...paymentsContext.paginations,
+          page: 1,
           size: +selectedNumber,
         });
       },

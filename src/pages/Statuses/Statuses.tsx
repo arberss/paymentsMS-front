@@ -2,6 +2,7 @@ import NavbarHeader from '@/components/Navbar/NavbarHeader';
 import Table from '@/components/Table/Table';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
 import { endpoints } from '@/config/endpoints';
+import { usePostMutation } from '@/hooks/useMutation';
 import { useQuery } from '@/hooks/useQuery';
 import { useAppSelector } from '@/store/hooks';
 import { StatusActionType } from '@/types/statuses/statuses';
@@ -20,11 +21,6 @@ const Statuses = () => {
       key: string;
     }[]
   >(endpoints.statuses);
-
-  const {
-    // statuses: { statuses },
-    addStatus: { loading },
-  } = useAppSelector((state) => state.statuses);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -50,7 +46,6 @@ const Statuses = () => {
         onClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
         action={StatusActionType.add}
-        loading={loading}
       />
     </>
   );

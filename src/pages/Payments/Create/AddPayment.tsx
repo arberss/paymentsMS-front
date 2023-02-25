@@ -112,12 +112,6 @@ const AddPayment = ({
   );
 
   const handleDelete = () => {
-    // dispatch(
-    //   deletePayment({
-    //     userId: formik.values.userId,
-    //     paymentId: selectedPayment?._id,
-    //   })
-    // );
     deleteMutation.mutate(
       {},
       {
@@ -160,6 +154,7 @@ const AddPayment = ({
                   opacity: '0.8 !important',
                 },
               }}
+              searchable
             />
           </Grid.Col>
           <Grid.Col xs={12} sm={6} md={6}>

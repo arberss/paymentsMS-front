@@ -1,13 +1,7 @@
-import addStatusSlice from './slices/statuses/addStatusSlice';
-import statusesSlice from './slices/statuses/statusesSlice';
-import addPaymentSlice from './slices/payments/addPaymentSlice';
-import paymentsSlice from './slices/payments/paymentsSlice';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import loginSlice from './slices/auth/loginSlice';
 import registerSlice from './slices/auth/registerSlice';
 import usersSlice from './slices/user/usersSlice';
-import userPaymentsSlice from './slices/payments/userPaymentsSlice';
-import deletePaymentSlice from './slices/payments/deletePaymentSlice';
 import actionsSlice from './slices/actions/actionsSlice';
 import addActionSlice from './slices/actions/addActionSlice';
 
@@ -17,18 +11,8 @@ export const store = configureStore({
       login: loginSlice,
       register: registerSlice,
     }),
-    payments: combineReducers({
-      payments: paymentsSlice,
-      addPayment: addPaymentSlice,
-      userPayments: userPaymentsSlice,
-      deletePayment: deletePaymentSlice,
-    }),
     users: combineReducers({
       users: usersSlice,
-    }),
-    statuses: combineReducers({
-      statuses: statusesSlice,
-      addStatus: addStatusSlice,
     }),
     actions: combineReducers({
       actions: actionsSlice,
