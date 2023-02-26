@@ -13,8 +13,6 @@ const UserPayments = () => {
     setUserPaymentModal,
   } = useContext(PaymentsContext);
 
-  console.log('selectedUser', selectedUser);
-
   const { columns, rows } = PaymentsMapper({
     data: selectedUser ? [selectedUser] : [],
   });

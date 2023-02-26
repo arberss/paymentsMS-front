@@ -2,56 +2,70 @@ import Loader from '@/components/Loader/Loader';
 import NavbarHeader from '@/components/Navbar/NavbarHeader';
 import Table, { columnRowType } from '@/components/Table/Table';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
+import { endpoints } from '@/config/endpoints';
+import { usePagination } from '@/hooks/usePagination';
 import { ActionMappers } from '@/mappers/ActionsMapper';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {
-  getActions,
-  setPage,
-  setSize,
-} from '@/store/slices/actions/actionsSlice';
+import { IAction } from '@/types/actions/actions';
 import { actionsEnum } from '@/types/enums/typeEnum';
+import { IPagination } from '@/types/pagination/pagination';
 import { useEffect, useState } from 'react';
 import GeneralCalculations from './components/GeneralCalculations';
 import AddAction from './create/AddAction';
 
 const Actions = () => {
-  const dispatch = useAppDispatch();
+  const [paginations, setPaginations] = useState({
+    page: 1,
+    size: 10,
+    totalPages: 10,
+  });
+
   const {
-    actions: {
-      actions,
-      loading,
-      pagination: { page, size, totalPages },
+    data: actions = {
+      data: [],
+      pagination: {
+        page: 1,
+        size: 10,
+        totalPages: 10,
+      },
     },
-  } = useAppSelector((state) => state.actions);
+    isLoading: loading,
+    isSuccess,
+    isFetching,
+  } = usePagination<{ data: IAction[]; pagination: IPagination }>(
+    endpoints.actions,
+    paginations
+  );
 
   const [actionModal, setActionModal] = useState<actionsEnum | null>(null);
   const [clickedRowId, setClickedRowId] = useState<string | undefined>(
     undefined
   );
 
+  useEffect(() => {
+    if (isSuccess) {
+      setPaginations(actions.pagination);
+    }
+  }, [isSuccess]);
+
   const { rows, columns, bottomRows } = ActionMappers({
-    data: actions,
+    data: actions.data,
     clickedRowId,
   });
 
   const tableOptions = {
     tableTitle: 'Hyrjet dhe daljet ne buxhet',
     pagination: {
-      activePage: page,
-      size,
-      totalPages,
+      activePage: paginations.page,
+      size: paginations.size,
+      totalPages: paginations.totalPages,
       onChange: (selectedNumber: number) => {
-        dispatch(setPage(selectedNumber));
+        setPaginations({ ...paginations, page: selectedNumber });
       },
       onSizeChange: (selectedNumber: string) => {
-        dispatch(setSize(+selectedNumber));
+        setPaginations({ ...paginations, page: 1, size: +selectedNumber });
       },
     },
   };
-
-  useEffect(() => {
-    dispatch(getActions({ pagination: { page, size } }));
-  }, [page, size]);
 
   const onRowClick = (column: columnRowType, row: columnRowType) => {
     setClickedRowId(column.invoiceNr);
@@ -70,7 +84,7 @@ const Actions = () => {
   }
 
   return (
-    <>
+    <div className='relative'>
       <NavbarHeader title='Veprimet' color='dark' />
       <TableTopActions
         title='Shto veprim'
@@ -92,7 +106,8 @@ const Actions = () => {
         onClose={handleCloseModal}
         action={actionModal ?? actionsEnum.add}
       />
-    </>
+      {isFetching && <Loader position='absolute' />}
+    </div>
   );
 };
 

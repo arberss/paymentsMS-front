@@ -5,7 +5,9 @@ import { createContext, useState } from 'react';
 
 const PaymentsContext = createContext({
   payment: null,
-  setPayment: (value: IPayment | null) => {},
+  setPayment: (
+    value: IPayment | { userId: string; payedForYear: string } | null
+  ) => {},
   paymentModal: null,
   setPaymentModal: (value: actionsEnum | null) => {},
   userPaymentModal: false,

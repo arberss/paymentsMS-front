@@ -1,5 +1,6 @@
 export const endpoints = {
   login: '/auth/signin',
+  register: '/auth/signup',
   statuses: '/statuses',
   addStatus: '/statuses',
   payments: '/payments',
@@ -7,4 +8,6 @@ export const endpoints = {
   editPayment: '/payments/::userId/::paymentId',
   deletePayment: '/payments/delete/::paymentId',
   users: '/user/all',
+  actions: '/actions',
+  addAction: '/actions',
 };

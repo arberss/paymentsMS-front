@@ -16,19 +16,28 @@ import { endpoints } from '@/config/endpoints';
 import { usePagination } from '@/hooks/usePagination';
 import { useQuery } from '@/hooks/useQuery';
 import PaymentsContext from '@/context/paymentsContext';
+import { IPagination } from '@/types/pagination/pagination';
+
+type PaymentsType = IPaymentsUser & { _id: string };
 
 const Payments = () => {
   const paymentsContext = useContext(PaymentsContext);
 
   const {
-    data: payments = { data: [], pagination: {} },
+    data: payments = {
+      data: [],
+      pagination: { page: 1, size: 10, totalPages: 10 },
+    },
     isLoading: loading,
     isSuccess,
     isFetching,
-  } = usePagination<any>(endpoints.payments, {
-    page: paymentsContext.paginations.page,
-    size: paymentsContext.paginations.size,
-  });
+  } = usePagination<{ data: PaymentsType[]; pagination: IPagination }>(
+    endpoints.payments,
+    {
+      page: paymentsContext.paginations.page,
+      size: paymentsContext.paginations.size,
+    }
+  );
 
   useQuery(endpoints.users);
 
@@ -56,7 +65,7 @@ const Payments = () => {
         const getUserPayments = payments.data.find(
           (payment: IPaymentsUser) =>
             payment.user.personalNumber === rowData?.key
-        );
+        )!;
         paymentsContext.setSelectedUser(getUserPayments);
         paymentsContext.setUserPaymentModal(true);
       },
@@ -106,24 +115,26 @@ const Payments = () => {
       (payment: { payments: IPayment[]; user: IUser }) =>
         payment.user.personalNumber === column.key
     );
-    const payment = userPayments.payments.find(
+    const payment = userPayments?.payments.find(
       (payment: IPayment) => payment._id === column.paymentIds[row.key]
     );
 
     const data = payment
       ? {
           ...payment,
-          userId: userPayments.user._id,
+          userId: userPayments?.user._id,
           exchange: Number(payment.exchange),
           payedForYear: String(payment.payedForYear),
           paymentDate: moment(payment.paymentDate).toDate(),
         }
       : {
-          userId: userPayments.user._id,
+          userId: userPayments?.user._id,
           payedForYear: String(row.key),
         };
 
-    paymentsContext.setPayment(data);
+    paymentsContext.setPayment(
+      data as IPayment | { userId: string; payedForYear: string }
+    );
     handleAddPayment(payment ? actionsEnum.edit : actionsEnum.emptyEdit);
   };
 

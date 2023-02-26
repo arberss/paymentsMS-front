@@ -6,13 +6,14 @@ import { Button, Flex, Grid, Modal } from '@mantine/core';
 import { useFormik } from 'formik';
 import moment from 'moment';
 import { actionsEnum, currencyEnums, typeEnum } from '@/types/enums/typeEnum';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import Loader from '@/components/Loader/Loader';
 import { IAction } from '@/types/actions/actions';
 import { validationSchema } from '../helper';
 import { typeSelector } from '@/pages/Payments/create/helper';
 import { getCurrencies, getMonths, getYears } from '@/utils/general';
-import { addAction } from '@/store/slices/actions/addActionSlice';
+import { usePostMutation } from '@/hooks/useMutation';
+import { endpoints } from '@/config/endpoints';
+import { useQueryClient } from 'react-query';
 
 interface AddActionProps {
   title: string;
@@ -40,10 +41,8 @@ const initialValues: IAction = {
 };
 
 const AddAction = ({ title, isOpen, onClose, action }: AddActionProps) => {
-  const dispatch = useAppDispatch();
-  const {
-    addAction: { loading },
-  } = useAppSelector((state) => state.actions);
+  const queryClient = useQueryClient();
+  const postMutation = usePostMutation(endpoints.addAction);
 
   const actionValues = {
     [actionsEnum.add]: {
@@ -63,13 +62,21 @@ const AddAction = ({ title, isOpen, onClose, action }: AddActionProps) => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        const result: { [key: string]: any } = await dispatch(
-          addAction({ values })
-        );
-
-        if (!result?.error) {
-          onClose();
-        }
+        const data = {
+          ...values,
+          exchange: values.exchange.toString(),
+          payedForYear: Number(values.payedForYear),
+          payedForMonth: Number(values.payedForMonth),
+          currency: values?.otherCurrency
+            ? values.otherCurrency
+            : values.currency,
+        };
+        postMutation.mutate(data, {
+          onSuccess: () => {
+            queryClient.invalidateQueries(endpoints.actions);
+            onClose();
+          },
+        });
       } catch (error) {
         return error;
       }
@@ -266,7 +273,7 @@ const AddAction = ({ title, isOpen, onClose, action }: AddActionProps) => {
           {action === actionsEnum.add ? 'Shto' : 'Ndrysho'}
         </Button>
       </form>
-      {loading && <Loader position='absolute' backdrop />}
+      {postMutation.isLoading && <Loader position='absolute' backdrop />}
     </Modal>
   );
 };

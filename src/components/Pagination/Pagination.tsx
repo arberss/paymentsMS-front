@@ -42,7 +42,7 @@ const Pagination = ({
         total={Math.ceil(totalPages / (size ?? 1))}
         page={activePage}
         boundaries={1}
-        siblings={0}
+        siblings={1}
         onChange={onChange}
       />
     </Flex>
