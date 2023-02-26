@@ -85,6 +85,7 @@ const Payments = () => {
         dispatch(setPage(selectedNumber));
       },
       onSizeChange: (selectedNumber: string) => {
+        dispatch(setPage(1));
         dispatch(setSize(+selectedNumber));
       },
     },
