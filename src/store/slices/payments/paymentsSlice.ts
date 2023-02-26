@@ -37,10 +37,15 @@ export const getPayments = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post<{
+      const response = await axios.get<{
         data: IPaymentsUser[];
         pagination: IPagination;
-      }>(`/payments?page=${data.pagination.page}&size=${data.pagination.size}`);
+      }>(`/payments`, {
+        params: {
+          page: data.pagination.page,
+          size: data.pagination.size,
+        },
+      });
       return response;
     } catch (error: unknown) {
       return rejectWithValue(returnError(error as { [key: string]: any }));
