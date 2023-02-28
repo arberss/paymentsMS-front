@@ -1,3 +1,4 @@
+import Outside from '@/shared-components/OutsideWrapper/Outside';
 import DataGrid from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import Pagination from '../Pagination/Pagination';
@@ -31,6 +32,7 @@ interface TableProps {
   };
   bottomRows?: { key: string; [key: string]: string | number }[] | null;
   style?: React.CSSProperties;
+  onOutsideClick?: () => void;
 }
 
 const Table = ({
@@ -43,6 +45,7 @@ const Table = ({
   options,
   bottomRows,
   style,
+  onOutsideClick,
 }: TableProps) => {
   let customColumns = [...columns];
 
@@ -70,16 +73,18 @@ const Table = ({
   }
 
   const gridElement = (
-    <DataGrid
-      style={style}
-      className='rdg-light tableGrid'
-      columns={customColumns}
-      rows={rows}
-      onRowDoubleClick={onRowDoubleClick}
-      onRowClick={onRowClick}
-      bottomSummaryRows={bottomRows}
-      rowHeight={45}
-    />
+    <Outside onOutsideClick={onOutsideClick}>
+      <DataGrid
+        style={style}
+        className='rdg-light tableGrid'
+        columns={customColumns}
+        rows={rows}
+        onRowDoubleClick={onRowDoubleClick}
+        onRowClick={onRowClick}
+        bottomSummaryRows={bottomRows}
+        rowHeight={45}
+      />
+    </Outside>
   );
 
   return (
