@@ -85,6 +85,9 @@ const Actions = () => {
         exports={{ excel: true, pdf: true }}
         options={tableOptions}
         style={{ blockSize: 400 }}
+        onOutsideClick={() => {
+          setClickedRowId('');
+        }}
       />
       <GeneralCalculations data={bottomRows} />
       <AddAction

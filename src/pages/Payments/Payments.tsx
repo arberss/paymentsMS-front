@@ -163,6 +163,9 @@ const Payments = () => {
           [bottomRows] as { [key: string]: string | number; key: string }[]
         }
         style={{ blockSize: 'unset' }}
+        onOutsideClick={() => {
+          setClickedRowId('');
+        }}
       />
       <AddPayment
         title={
