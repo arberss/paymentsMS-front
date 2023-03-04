@@ -4,12 +4,14 @@ import Table, { columnRowType } from '@/components/Table/Table';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
 import { endpoints } from '@/config/endpoints';
 import { usePagination } from '@/hooks/usePagination';
-import { ActionMappers } from '@/mappers/ActionsMapper';
+import { ActionMappers, calculateAmountsByYear } from '@/mappers/ActionsMapper';
 import { IAction } from '@/types/actions/actions';
-import { actionsEnum } from '@/types/enums/typeEnum';
+import { actionsEnum, typeEnum, typeEnumsAl } from '@/types/enums/typeEnum';
 import { IPagination } from '@/types/pagination/pagination';
 import { useEffect, useState } from 'react';
-import GeneralCalculations from './components/GeneralCalculations';
+import GeneralCalculations, {
+  Operators,
+} from './components/GeneralCalculations';
 import AddAction from './create/AddAction';
 
 const Actions = () => {
@@ -83,6 +85,8 @@ const Actions = () => {
     return <Loader />;
   }
 
+  const calculatedByYears = calculateAmountsByYear(actions?.data);
+
   return (
     <div className='relative'>
       <NavbarHeader title='Veprimet' color='dark' />
@@ -102,7 +106,19 @@ const Actions = () => {
           setClickedRowId('');
         }}
       />
-      <GeneralCalculations data={bottomRows} />
+      <GeneralCalculations
+        data={calculatedByYears}
+        tableTitle='Te hyrat vjetore ne buxhet'
+        types={calculatedByYears?.years}
+        typeName={calculatedByYears?.years}
+        operator={Operators['+']}
+      />
+      <GeneralCalculations
+        data={bottomRows}
+        tableTitle='Bilanci i buxhetit'
+        types={typeEnum}
+        typeName={typeEnumsAl}
+      />
       <AddAction
         title='Shto veprim'
         isOpen={Boolean(actionModal)}

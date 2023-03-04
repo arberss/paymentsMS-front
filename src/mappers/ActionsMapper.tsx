@@ -260,19 +260,60 @@ const calculateAmounts = (actions: IAction[]) => {
     isFooter: true,
   };
 
-  actions?.forEach((action: IAction) => {
-    values['currencies'] = {
-      ...(values['currencies'] ?? {}),
-      [action.currency]: action.currency,
+  actions?.forEach(({ currency, type, amount }: IAction) => {
+    values.currencies = {
+      ...(values.currencies ?? {}),
+      [currency]: currency,
     };
 
-    values[action.type] = {
-      ...(values[action.type] ?? {}),
-      [action.currency]:
-        values?.[action.type]?.[action.currency] + action.amount ||
-        action.amount,
+    values[type] = {
+      ...(values[type] ?? {}),
+      [currency]: values?.[type]?.[currency] + amount || amount,
     };
   });
 
   return values;
+};
+
+export const calculateAmountsByYear = (
+  actions: IAction[]
+): { [key: string]: any; key: string } => {
+  const result: { [key: string]: any; key: string } = actions.reduce(
+    (
+      acc: { [key: string]: any; key: string },
+      { currency, amount, payedForYear, type }
+    ) => {
+      if (!acc[payedForYear]) {
+        acc[payedForYear] = {};
+      }
+      if (!acc[payedForYear][currency]) {
+        acc[payedForYear][currency] = 0;
+      }
+
+      if (!acc['currencies']) {
+        acc['currencies'] = {};
+      }
+      if (!acc['currencies'][currency]) {
+        acc['currencies'][currency] = currency;
+      }
+
+      if (!acc['years']) {
+        acc['years'] = {};
+      }
+      if (!acc['years'][payedForYear]) {
+        acc['years'][payedForYear] = payedForYear;
+      }
+
+      if (type === typeEnum.expense) {
+        acc[payedForYear][currency] -= amount;
+      } else {
+        acc[payedForYear][currency] += amount;
+      }
+
+      return acc;
+    },
+    { key: 'calcByYear' }
+  );
+
+  return result;
 };
