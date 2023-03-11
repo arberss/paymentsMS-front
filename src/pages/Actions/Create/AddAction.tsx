@@ -60,7 +60,7 @@ const AddAction = ({ title, isOpen, onClose, action }: AddActionProps) => {
     initialValues: actionValues[action].initialValues,
     enableReinitialize: true,
     validationSchema,
-    onSubmit: async (values) => {
+    onSubmit: async (values, formikHelpers) => {
       try {
         const data = {
           ...values,
@@ -75,6 +75,7 @@ const AddAction = ({ title, isOpen, onClose, action }: AddActionProps) => {
           onSuccess: () => {
             queryClient.invalidateQueries(endpoints.actions);
             onClose();
+            formikHelpers.resetForm();
           },
         });
       } catch (error) {
