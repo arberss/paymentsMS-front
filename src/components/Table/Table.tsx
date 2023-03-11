@@ -8,7 +8,7 @@ import './table.scss';
 
 export type columnRowType = { [key: string]: any };
 
-interface TableProps {
+export interface TableProps {
   columns: { key: string; name: string }[];
   rows: { key: string; [key: string]: string | number | undefined }[];
   onRowClick?: (column: columnRowType, row: columnRowType) => void;
@@ -65,7 +65,7 @@ const Table = ({
       },
     ];
 
-    if (options?.actionColumn?.position === 'left') {
+    if (options?.actionColumn?.position === 'right') {
       customColumns.push(...tableActions);
     } else {
       customColumns = [...tableActions, ...customColumns];

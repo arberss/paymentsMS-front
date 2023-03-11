@@ -14,18 +14,18 @@ export const linkData: LinkDataProps[] = [
     icon: <IconCash size={20} />,
     color: 'blue',
     label: 'Pagesat',
-    to: '/dashboard/payments',
+    to: '/payments',
   },
   {
     icon: <IconHierarchy2 size={20} />,
     color: 'blue',
     label: 'Statuset',
-    to: '/dashboard/statuses',
+    to: '/statuses',
   },
   {
     icon: <IconActivity size={20} />,
     color: 'blue',
     label: 'Veprimet',
-    to: '/dashboard/actions',
+    to: '/actions',
   },
 ];

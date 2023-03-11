@@ -26,7 +26,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -44,7 +44,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -62,7 +62,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -80,7 +80,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -98,7 +98,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -116,7 +116,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -134,7 +134,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -152,7 +152,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -170,7 +170,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -188,7 +188,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -206,7 +206,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },
@@ -224,7 +224,7 @@ export const ActionMappers = ({
         <TableSelectedColumn
           clickedRowId={clickedRowId}
           value={row?.[column?.key]}
-          uniqueKey={row.invoiceNr}
+          uniqueKey={row._id}
         />
       ),
     },

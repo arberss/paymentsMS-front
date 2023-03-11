@@ -14,7 +14,7 @@ const RoutesComponent = () => {
   return (
     <Routes>
       <Route
-        path='/dashboard'
+        path='/'
         element={
           <ProtectedRoute redirectPath='/auth/login'>
             <Dashboard />

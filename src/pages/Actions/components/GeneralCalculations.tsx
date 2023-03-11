@@ -67,7 +67,7 @@ const getRows = (
     type: 'Bilanci',
   };
 
-  const result = Object.keys(types).map((key) => {
+  const result = Object?.keys(types ?? {})?.map((key) => {
     Object.keys(data?.currencies ?? {}).forEach((curr) => {
       if (operator === Operators['+']) {
         total[curr] = Math.abs(
@@ -98,7 +98,10 @@ const GeneralCalculations = ({
   if (!data) return null;
 
   const columns = getColumns(data);
-  const { rows, total } = getRows(data, types, typeName, operator);
+  const { rows, total } = getRows(data, types, typeName, operator) ?? {
+    rows: [],
+    total: {},
+  };
 
   return (
     <div className='generalCalculations'>
