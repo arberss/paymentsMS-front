@@ -42,7 +42,6 @@ const Actions = () => {
         totalPages: 10,
       },
     },
-    isSuccess,
     isLoading: loading,
     isFetching,
   } = usePagination<{ data: IAction[]; pagination: IPagination }>(
