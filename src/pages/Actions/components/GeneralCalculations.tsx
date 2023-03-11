@@ -16,6 +16,7 @@ interface GeneralCalculationsProps {
   types: { [key: string]: any };
   typeName: { [key: string]: any };
   operator?: Operators;
+  showBottomRow?: boolean;
 }
 
 const getColumns = (data: GeneralCalculationsProps['data']) => {
@@ -94,6 +95,7 @@ const GeneralCalculations = ({
   types,
   typeName,
   operator = Operators['-'],
+  showBottomRow = true,
 }: GeneralCalculationsProps) => {
   if (!data) return null;
 
@@ -108,7 +110,7 @@ const GeneralCalculations = ({
       <Table
         columns={columns}
         rows={rows ?? []}
-        bottomRows={[total]}
+        bottomRows={showBottomRow ? [total] : null}
         exports={{ excel: true, pdf: true }}
         style={{ blockSize: 'unset' }}
         options={{ tableTitle: tableTitle }}
