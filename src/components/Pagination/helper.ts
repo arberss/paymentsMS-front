@@ -12,3 +12,7 @@ export const sizeFilter = [
     value: '100',
   },
 ];
+
+export const calculatePages = (totalPages: number, size: number) => {
+  return Math.ceil(totalPages / (size ?? 1));
+};

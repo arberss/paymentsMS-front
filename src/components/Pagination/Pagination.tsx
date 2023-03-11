@@ -1,6 +1,6 @@
 import Select from '@/shared-components/Form/Select/Select';
 import { Flex, Pagination as MantinePagination } from '@mantine/core';
-import { sizeFilter } from './helper';
+import { calculatePages, sizeFilter } from './helper';
 import './pagination.scss';
 
 interface PaginationProps {
@@ -39,7 +39,7 @@ const Pagination = ({
         sx={{ width: '15%' }}
       />
       <MantinePagination
-        total={Math.ceil(totalPages / (size ?? 1))}
+        total={calculatePages(totalPages, size ?? 1)}
         page={activePage}
         boundaries={1}
         siblings={1}

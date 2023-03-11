@@ -10,4 +10,5 @@ export const endpoints = {
   users: '/user/all',
   actions: '/actions',
   addAction: '/actions',
+  deleteAction: '/actions/::actionId',
 };

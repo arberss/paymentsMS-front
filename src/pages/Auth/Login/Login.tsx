@@ -41,7 +41,7 @@ const Login = () => {
             handleLogin(data.token);
 
             formikHelpers.resetForm();
-            navigate('/dashboard/payments');
+            navigate('/payments');
           },
         });
       } catch (error) {

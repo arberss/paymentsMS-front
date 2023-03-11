@@ -1,14 +1,19 @@
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
 import Loader from '@/components/Loader/Loader';
 import NavbarHeader from '@/components/Navbar/NavbarHeader';
-import Table, { columnRowType } from '@/components/Table/Table';
+import { Actions as TableActions } from '@/components/Table/actions/TableActions';
+import Table, { columnRowType, TableProps } from '@/components/Table/Table';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
 import { endpoints } from '@/config/endpoints';
+import { usePutMutation } from '@/hooks/useMutation';
 import { usePagination } from '@/hooks/usePagination';
 import { ActionMappers, calculateAmountsByYear } from '@/mappers/ActionsMapper';
 import { IAction } from '@/types/actions/actions';
 import { actionsEnum, typeEnum, typeEnumsAl } from '@/types/enums/typeEnum';
 import { IPagination } from '@/types/pagination/pagination';
-import { useEffect, useState } from 'react';
+import { IconTrash } from '@tabler/icons-react';
+import { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import GeneralCalculations, {
   Operators,
 } from './components/GeneralCalculations';
@@ -20,6 +25,13 @@ const Actions = () => {
     size: 10,
     totalPages: 10,
   });
+  const [actionModal, setActionModal] = useState<actionsEnum | null>(null);
+  const [clickedRowId, setClickedRowId] = useState<string | undefined>(
+    undefined
+  );
+  const [confirmModal, setConfirmModal] = useState<boolean>(false);
+
+  const queryClient = useQueryClient();
 
   const {
     data: actions = {
@@ -30,32 +42,45 @@ const Actions = () => {
         totalPages: 10,
       },
     },
-    isLoading: loading,
     isSuccess,
+    isLoading: loading,
     isFetching,
   } = usePagination<{ data: IAction[]; pagination: IPagination }>(
     endpoints.actions,
-    paginations
-  );
-
-  const [actionModal, setActionModal] = useState<actionsEnum | null>(null);
-  const [clickedRowId, setClickedRowId] = useState<string | undefined>(
-    undefined
-  );
-
-  useEffect(() => {
-    if (isSuccess) {
-      setPaginations(actions.pagination);
+    { page: paginations.page, size: paginations.size },
+    {
+      onSuccess: (data: any) => {
+        setPaginations(data.pagination);
+      },
     }
-  }, [isSuccess]);
+  );
+
+  const putMutation = usePutMutation(
+    endpoints.deleteAction.replace('::actionId', clickedRowId!)
+  );
 
   const { rows, columns, bottomRows } = ActionMappers({
     data: actions.data,
     clickedRowId,
   });
 
-  const tableOptions = {
+  const tableActions = [
+    (): TableActions => ({
+      type: 'delete',
+      text: 'Delete',
+      svgComponent: <IconTrash size={18} color='orangered' />,
+      action: (): void => {
+        setConfirmModal(true);
+      },
+    }),
+  ];
+
+  const tableOptions: TableProps['options'] = {
     tableTitle: 'Hyrjet dhe daljet ne buxhet',
+    actionColumn: {
+      frozen: true,
+      position: 'left',
+    },
     pagination: {
       activePage: paginations.page,
       size: paginations.size,
@@ -70,7 +95,7 @@ const Actions = () => {
   };
 
   const onRowClick = (column: columnRowType, row: columnRowType) => {
-    setClickedRowId(column.invoiceNr);
+    setClickedRowId(column._id);
   };
 
   const handleModal = (value: actionsEnum | null) => {
@@ -79,6 +104,18 @@ const Actions = () => {
 
   const handleCloseModal = () => {
     handleModal(null);
+  };
+
+  const handleDelete = () => {
+    putMutation.mutate(
+      {},
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(endpoints.actions);
+          setConfirmModal(false);
+        },
+      }
+    );
   };
 
   if (loading) {
@@ -101,6 +138,7 @@ const Actions = () => {
         onRowClick={onRowClick}
         exports={{ excel: true, pdf: true }}
         options={tableOptions}
+        actions={tableActions}
         style={{ blockSize: 400 }}
         onOutsideClick={() => {
           setClickedRowId('');
@@ -126,6 +164,12 @@ const Actions = () => {
         action={actionModal ?? actionsEnum.add}
       />
       {isFetching && <Loader position='absolute' />}
+      <ConfirmModal
+        isOpen={confirmModal}
+        title='A jeni i sigurt qe deshironi ta fshini kete veprim?'
+        onClose={() => setConfirmModal(false)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };
