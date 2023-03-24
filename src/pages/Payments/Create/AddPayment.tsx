@@ -123,11 +123,16 @@ const AddPayment = ({
     setConfirmDeleteModal(false);
   };
 
+  const handleCloseModal = () => {
+    onClose();
+    formik.resetForm();
+  }
+
   return (
     <Modal
       opened={isOpen}
       size='lg'
-      onClose={onClose}
+      onClose={handleCloseModal}
       title={title}
       closeOnClickOutside={false}
       centered
