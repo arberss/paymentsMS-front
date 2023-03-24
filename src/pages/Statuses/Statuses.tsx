@@ -1,7 +1,8 @@
 import NavbarHeader from '@/components/Navbar/NavbarHeader';
 import Table from '@/components/Table/Table';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
-import { useAppSelector } from '@/store/hooks';
+import { endpoints } from '@/config/endpoints';
+import { useQuery } from '@/hooks/useQuery';
 import { StatusActionType } from '@/types/statuses/statuses';
 import { useState } from 'react';
 import AddStatus from './create/AddStatus';
@@ -12,10 +13,12 @@ const columns = [
 ];
 
 const Statuses = () => {
-  const {
-    statuses: { statuses },
-    addStatus: { loading },
-  } = useAppSelector((state) => state.statuses);
+  const { data: statuses = [] } = useQuery<
+    {
+      [key: string]: string | number | undefined;
+      key: string;
+    }[]
+  >(endpoints.statuses);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -41,7 +44,6 @@ const Statuses = () => {
         onClose={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
         action={StatusActionType.add}
-        loading={loading}
       />
     </>
   );

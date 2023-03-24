@@ -5,19 +5,19 @@ import Select from '@/shared-components/Form/Select/Select';
 import { Button, Grid, Modal } from '@mantine/core';
 import { FormikValues, useFormik } from 'formik';
 import moment from 'moment';
-import { typeSelector, usersOptions, validationSchema } from './helper';
-import { actionsEnum, typeEnum } from '@/types/enums/typeEnum';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {
-  addPayment,
-  editPayment,
-} from '@/store/slices/payments/addPaymentSlice';
+import { usersOptions, validationSchema } from './helper';
+import { actionsEnum } from '@/types/enums/typeEnum';
 import { IPayment } from '@/types/payments/payments';
-import { deletePayment } from '@/store/slices/payments/deletePaymentSlice';
 import Loader from '@/components/Loader/Loader';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal';
 import { getYears } from '@/utils/general';
+import { useQuery } from '@/hooks/useQuery';
+import { endpoints } from '@/config/endpoints';
+import { IUser } from '@/types/user/user';
+import { usePutMutation } from '@/hooks/useMutation';
+import { useQueryClient } from 'react-query';
+import PaymentsContext from '@/context/paymentsContext';
 
 interface AddPaymentProps {
   title: string;
@@ -49,16 +49,15 @@ const AddPayment = ({
   action,
   selectedPayment,
 }: AddPaymentProps) => {
-  const dispatch = useAppDispatch();
-  const {
-    users: { users },
-  } = useAppSelector((state) => state.users);
-  const {
-    addPayment: { loading },
-    deletePayment: { loading: deleteLoading },
-  } = useAppSelector((state) => state.payments);
+  const paymentsContext = useContext(PaymentsContext);
 
-  const [confirmModal, setConfirmModal] = useState<boolean>(false);
+  const [confirmDeleteModal, setConfirmDeleteModal] = useState<boolean>(false);
+
+  const queryClient = useQueryClient();
+  const { data: users = [] } = useQuery<IUser[]>(endpoints.users);
+  const deleteMutation = usePutMutation(
+    endpoints.deletePayment.replace('::paymentId', selectedPayment?._id)
+  );
 
   const actionValues = {
     [actionsEnum.add]: {
@@ -72,34 +71,68 @@ const AddPayment = ({
     },
   };
 
+  const handleSuccess = () => {
+    queryClient.invalidateQueries(endpoints.payments);
+    paymentsContext.setPaymentModal(null);
+  };
+
   const formik = useFormik({
     initialValues: actionValues[action].initialValues,
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values) => {
+      const data = {
+        ...values,
+        exchange: values.exchange.toString(),
+        payedForYear: Number(values.payedForYear),
+      };
       if ([actionsEnum.add, actionsEnum.emptyEdit].includes(action)) {
-        dispatch(addPayment({ values, userId: formik.values.userId }));
+        putMutation.mutate(data, {
+          onSuccess() {
+            handleSuccess();
+          },
+        });
       } else {
-        dispatch(editPayment({ values, userId: formik.values.userId }));
+        putEditMutation.mutate(data, {
+          onSuccess() {
+            handleSuccess();
+          },
+        });
       }
     },
   });
 
+  const putMutation = usePutMutation(
+    endpoints.addPayment.replace('::userId', formik.values.userId)
+  );
+  const putEditMutation = usePutMutation(
+    endpoints.editPayment
+      .replace('::userId', formik.values.userId)
+      .replace('::paymentId', formik.values._id ? formik.values._id : '')
+  );
+
   const handleDelete = () => {
-    dispatch(
-      deletePayment({
-        userId: formik.values.userId,
-        paymentId: selectedPayment?._id,
-      })
+    deleteMutation.mutate(
+      {},
+      {
+        onSuccess() {
+          handleSuccess();
+        },
+      }
     );
-    setConfirmModal(false);
+    setConfirmDeleteModal(false);
   };
+
+  const handleCloseModal = () => {
+    onClose();
+    formik.resetForm();
+  }
 
   return (
     <Modal
       opened={isOpen}
       size='lg'
-      onClose={onClose}
+      onClose={handleCloseModal}
       title={title}
       closeOnClickOutside={false}
       centered
@@ -126,6 +159,7 @@ const AddPayment = ({
                   opacity: '0.8 !important',
                 },
               }}
+              searchable
             />
           </Grid.Col>
           <Grid.Col xs={12} sm={6} md={6}>
@@ -215,7 +249,7 @@ const AddPayment = ({
             sx={{ width: '100%', marginTop: 10, fontSize: 16 }}
             variant='outline'
             color='red'
-            onClick={() => setConfirmModal(true)}
+            onClick={() => setConfirmDeleteModal(true)}
           >
             Fshij
           </Button>
@@ -228,12 +262,14 @@ const AddPayment = ({
         </Button>
       </form>
       <ConfirmModal
-        isOpen={confirmModal}
-        onClose={() => setConfirmModal(false)}
+        isOpen={confirmDeleteModal}
+        onClose={() => setConfirmDeleteModal(false)}
         onConfirm={() => handleDelete()}
         description={`A jeni i sigurt qe deshironi ta fshini pagesen per vitin ${formik.values.payedForYear}?`}
       />
-      {(loading || deleteLoading) && <Loader position='absolute' backdrop />}
+      {(putMutation.isLoading ||
+        putEditMutation.isLoading ||
+        deleteMutation.isLoading) && <Loader position='absolute' backdrop />}
     </Modal>
   );
 };

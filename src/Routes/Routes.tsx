@@ -1,7 +1,7 @@
 import Actions from '@/pages/Actions/Actions';
 import Register from '@/pages/Auth/Register/Register';
 import Dashboard from '@/pages/Dashboard/Dashboard';
-import Payments from '@/pages/Payments/Payments';
+import Payments from '@/pages/Payments';
 import Statuses from '@/pages/Statuses/Statuses';
 import { decodeToken } from '@/utils/decodeToken';
 import { Route, Routes } from 'react-router-dom';
@@ -14,7 +14,7 @@ const RoutesComponent = () => {
   return (
     <Routes>
       <Route
-        path='/dashboard'
+        path='/'
         element={
           <ProtectedRoute redirectPath='/auth/login'>
             <Dashboard />

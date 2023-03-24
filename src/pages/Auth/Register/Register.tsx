@@ -4,12 +4,13 @@ import AuthLayout from '@/shared-components/Layouts/Auth/AuthLayout';
 import { Link, useNavigate } from 'react-router-dom';
 import NumberInput from '@/shared-components/Form/Input/NumberInput';
 import { useFormik } from 'formik';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { registerUser } from '@/store/slices/auth/registerSlice';
 import { validationSchema } from './helper';
 import { useState } from 'react';
 import Select from '@/shared-components/Form/Select/Select';
 import { IStatus } from '@/types/statuses/statuses';
+import { useQuery } from '@/hooks/useQuery';
+import { endpoints } from '@/config/endpoints';
+import { usePostMutation } from '@/hooks/useMutation';
 
 export interface RegisterFormData {
   firstName: string;
@@ -24,16 +25,16 @@ export interface RegisterFormData {
 
 const Register = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const {
-    statuses: { statuses },
-  } = useAppSelector((state) => state.statuses);
+
+  const { data: statuses = [] } = useQuery<IStatus[]>(endpoints.statuses);
   const statusesSelectData = statuses?.map((status: IStatus) => {
     return {
       label: status.name,
-      value: status._id,
+      value: status._id!,
     };
   });
+
+  const postMutation = usePostMutation(endpoints.register);
 
   const [passwordVisibility, setPasswordVisibility] = useState(false);
 
@@ -45,25 +46,19 @@ const Register = () => {
     confirmPassword: '',
     personalNumber: '',
     status: '',
-    role: ''
+    role: '',
   };
 
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: async (values, formikHelpers) => {
-      try {
-        const result: { [key: string]: any } = await dispatch(
-          registerUser({ values })
-        );
-        
-        if (!result?.error) {
+      postMutation.mutate(values, {
+        onSuccess: () => {
           formikHelpers.resetForm();
           navigate('/auth/login');
-        }
-      } catch (error) {
-        return error;
-      }
+        },
+      });
     },
   });
 

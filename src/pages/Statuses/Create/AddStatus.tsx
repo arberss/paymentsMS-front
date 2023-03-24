@@ -1,12 +1,12 @@
 import Loader from '@/components/Loader/Loader';
+import { endpoints } from '@/config/endpoints';
+import { usePostMutation } from '@/hooks/useMutation';
 import Input from '@/shared-components/Form/Input/Input';
 import toast from '@/shared-components/toast/toast';
-import { useAppDispatch } from '@/store/hooks';
-import { addStatus } from '@/store/slices/statuses/addStatusSlice';
 import { StatusActionType } from '@/types/statuses/statuses';
 import { Button, Modal } from '@mantine/core';
 import { useFormik } from 'formik';
-import React from 'react';
+import { useQueryClient } from 'react-query';
 import { validationSchema } from './helper';
 
 interface AddStatusProps {
@@ -14,7 +14,6 @@ interface AddStatusProps {
   isOpen: boolean;
   onClose: () => void;
   action: StatusActionType;
-  loading?: boolean;
 }
 
 interface InitialValuesType {
@@ -27,26 +26,26 @@ const initialValues: InitialValuesType = {
   name: '',
 };
 
-const AddStatus = ({
-  title,
-  isOpen,
-  onClose,
-  action,
-  loading,
-}: AddStatusProps) => {
-  const dispatch = useAppDispatch();
+const AddStatus = ({ title, isOpen, onClose, action }: AddStatusProps) => {
+  const queryClient = useQueryClient();
+  const postMutation = usePostMutation(endpoints.addStatus);
 
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values, formikHelpers) => {
-      const result: { [key: string]: any } = await dispatch(addStatus(values));
-      if (!result?.error) {
-        formikHelpers.resetForm();
-        onClose();
-        toast({ title: 'Statusi u shtua me sukses', status: 'success' });
-      }
+      postMutation.mutate(
+        { name: values.name },
+        {
+          onSuccess() {
+            queryClient.invalidateQueries(endpoints.statuses);
+            formikHelpers.resetForm();
+            onClose();
+            toast({ title: 'Statusi u shtua me sukses', status: 'success' });
+          },
+        }
+      );
     },
   });
 
@@ -75,7 +74,7 @@ const AddStatus = ({
           {action === StatusActionType.add ? 'Shto' : 'Ndrysho'}
         </Button>
       </form>
-      {loading && <Loader position='absolute' backdrop />}
+      {postMutation.isLoading && <Loader position='absolute' backdrop />}
     </Modal>
   );
 };

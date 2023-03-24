@@ -1,13 +1,22 @@
 import Table, { columnRowType } from '@/components/Table/Table';
-import { typeEnum, typeEnumsAl } from '@/types/enums/typeEnum';
 import { firstLetterUppercase } from '@/utils/general';
 import './generalCalculations.scss';
+
+export enum Operators {
+  '+' = '+',
+  '-' = '-',
+}
 
 interface GeneralCalculationsProps {
   data?: {
     [key: string]: any;
     key: string;
   };
+  tableTitle: string;
+  types: { [key: string]: any };
+  typeName: { [key: string]: any };
+  operator?: Operators;
+  showBottomRow?: boolean;
 }
 
 const getColumns = (data: GeneralCalculationsProps['data']) => {
@@ -48,19 +57,31 @@ const getColumns = (data: GeneralCalculationsProps['data']) => {
   return [statisData, ...(result as [])];
 };
 
-const getRows = (data: GeneralCalculationsProps['data']) => {
+const getRows = (
+  data: GeneralCalculationsProps['data'],
+  types: { [key: string]: any },
+  typeName: { [key: string]: any },
+  operator: Operators
+) => {
   const total: { key: string; [key: string]: any } = {
     key: 'Bilanci',
     type: 'Bilanci',
   };
 
-  const result = Object.keys(typeEnum).map((key) => {
+  const result = Object?.keys(types ?? {})?.map((key) => {
     Object.keys(data?.currencies ?? {}).forEach((curr) => {
-      total[curr] = total[curr] - (data?.[key]?.[curr] ?? 0) || (data?.[key][curr] ?? 0);
+      if (operator === Operators['+']) {
+        total[curr] = Math.abs(
+          total[curr] + (data?.[key]?.[curr] ?? 0) || (data?.[key][curr] ?? 0)
+        );
+      } else {
+        total[curr] =
+          total[curr] - (data?.[key]?.[curr] ?? 0) || (data?.[key][curr] ?? 0);
+      }
     });
     return {
       key,
-      type: typeEnumsAl[key as unknown as keyof typeof typeEnum],
+      type: typeName[key],
       ...(data?.[key] && { ...(data[key] as Object) }),
     };
   });
@@ -68,21 +89,31 @@ const getRows = (data: GeneralCalculationsProps['data']) => {
   return { rows: result, total };
 };
 
-const GeneralCalculations = ({ data }: GeneralCalculationsProps) => {
+const GeneralCalculations = ({
+  data,
+  tableTitle,
+  types,
+  typeName,
+  operator = Operators['-'],
+  showBottomRow = true,
+}: GeneralCalculationsProps) => {
   if (!data) return null;
 
   const columns = getColumns(data);
-  const { rows, total } = getRows(data);
+  const { rows, total } = getRows(data, types, typeName, operator) ?? {
+    rows: [],
+    total: {},
+  };
 
   return (
     <div className='generalCalculations'>
       <Table
         columns={columns}
         rows={rows ?? []}
-        bottomRows={[total]}
+        bottomRows={showBottomRow ? [total] : null}
         exports={{ excel: true, pdf: true }}
         style={{ blockSize: 'unset' }}
-        options={{tableTitle: "Bilanci i buxhetit"}}
+        options={{ tableTitle: tableTitle }}
       />
     </div>
   );

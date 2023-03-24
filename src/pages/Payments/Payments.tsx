@@ -1,58 +1,58 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import NavbarHeader from '@/components/Navbar/NavbarHeader';
 import Table, { columnRowType } from '@/components/Table/Table';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import {
-  getPayments,
-  setPage,
-  setSize,
-} from '@/store/slices/payments/paymentsSlice';
-import {
-  setPayment,
-  setPaymentModalValue,
-} from '@/store/slices/payments/addPaymentSlice';
 import { PaymentsMapper } from '@/mappers/PaymentsMapper';
 import AddPayment from './create/AddPayment';
 import TableTopActions from '@/components/TableTopActions/TableTopActions';
 import moment from 'moment';
-import { getUsers } from '@/store/slices/user/usersSlice';
 import { actionsEnum } from '@/types/enums/typeEnum';
 import { IPayment, IPaymentsUser } from '@/types/payments/payments';
 import { IUser } from '@/types/user/user';
 import { Actions } from '@/components/Table/actions/TableActions';
 import { IconEye } from '@tabler/icons-react';
 import UserPayments from './userPayments/UserPayments';
-import {
-  setModalOpen,
-  setUserPayments,
-} from '@/store/slices/payments/userPaymentsSlice';
 import Loader from '@/components/Loader/Loader';
+import { endpoints } from '@/config/endpoints';
+import { usePagination } from '@/hooks/usePagination';
+import { useQuery } from '@/hooks/useQuery';
+import PaymentsContext from '@/context/paymentsContext';
+import { IPagination } from '@/types/pagination/pagination';
+
+type PaymentsType = IPaymentsUser & { _id: string };
 
 const Payments = () => {
-  const dispatch = useAppDispatch();
+  const paymentsContext = useContext(PaymentsContext);
+
   const {
-    payments: {
-      payments,
-      loading,
-      pagination: { page, size, totalPages },
+    data: payments = {
+      data: [],
+      pagination: { page: 1, size: 10, totalPages: 10 },
     },
-    addPayment: { openPaymentModal, payment },
-  } = useAppSelector((state) => state.payments);
+    isLoading: loading,
+    isSuccess,
+    isFetching,
+  } = usePagination<{ data: PaymentsType[]; pagination: IPagination }>(
+    endpoints.payments,
+    {
+      page: paymentsContext.paginations.page,
+      size: paymentsContext.paginations.size,
+    }
+  );
+
+  useQuery(endpoints.users);
+
+  useEffect(() => {
+    if (isSuccess) {
+      paymentsContext.setPaginations(payments.pagination);
+    }
+  }, [isSuccess]);
 
   const [clickedRowId, setClickedRowId] = useState<string | undefined>(
     undefined
   );
 
-  useEffect(() => {
-    dispatch(getPayments({ pagination: { page, size } }));
-  }, [page, size]);
-
-  useEffect(() => {
-    dispatch(getUsers());
-  }, []);
-
   const { columns, rows, bottomRows } = PaymentsMapper({
-    data: payments,
+    data: payments.data,
     clickedRowId,
   });
 
@@ -62,12 +62,12 @@ const Payments = () => {
       text: 'Edit',
       svgComponent: <IconEye size={18} />,
       action: (): void => {
-        const getUserPayments = payments.find(
+        const getUserPayments = payments.data.find(
           (payment: IPaymentsUser) =>
             payment.user.personalNumber === rowData?.key
-        );
-        dispatch(setUserPayments(getUserPayments));
-        dispatch(setModalOpen(true));
+        )!;
+        paymentsContext.setSelectedUser(getUserPayments);
+        paymentsContext.setUserPaymentModal(true);
       },
     }),
   ];
@@ -78,14 +78,21 @@ const Payments = () => {
       width: 20,
     },
     pagination: {
-      activePage: page,
-      size,
-      totalPages,
+      activePage: paymentsContext.paginations.page,
+      size: paymentsContext.paginations.size,
+      totalPages: paymentsContext.paginations.totalPages,
       onChange: (selectedNumber: number) => {
-        dispatch(setPage(selectedNumber));
+        paymentsContext.setPaginations({
+          ...paymentsContext.paginations,
+          page: selectedNumber,
+        });
       },
       onSizeChange: (selectedNumber: string) => {
-        dispatch(setSize(+selectedNumber));
+        paymentsContext.setPaginations({
+          ...paymentsContext.paginations,
+          page: 1,
+          size: +selectedNumber,
+        });
       },
     },
   };
@@ -104,38 +111,40 @@ const Payments = () => {
       return;
     }
 
-    const userPayments = payments.find(
+    const userPayments = payments.data.find(
       (payment: { payments: IPayment[]; user: IUser }) =>
         payment.user.personalNumber === column.key
     );
-    const payment = userPayments.payments.find(
+    const payment = userPayments?.payments.find(
       (payment: IPayment) => payment._id === column.paymentIds[row.key]
     );
 
     const data = payment
       ? {
           ...payment,
-          userId: userPayments.user._id,
+          userId: userPayments?.user._id,
           exchange: Number(payment.exchange),
           payedForYear: String(payment.payedForYear),
           paymentDate: moment(payment.paymentDate).toDate(),
         }
       : {
-          userId: userPayments.user._id,
+          userId: userPayments?.user._id,
           payedForYear: String(row.key),
         };
 
-    dispatch(setPayment(data));
+    paymentsContext.setPayment(
+      data as IPayment | { userId: string; payedForYear: string }
+    );
     handleAddPayment(payment ? actionsEnum.edit : actionsEnum.emptyEdit);
   };
 
   const handleAddPayment = (value: actionsEnum | null) => {
-    dispatch(setPaymentModalValue(value));
+    paymentsContext.setPaymentModal(value);
   };
 
   const handleCloseModal = () => {
     handleAddPayment(null);
-    dispatch(setPayment(null));
+    paymentsContext.setPayment(null);
   };
 
   if (loading) {
@@ -143,7 +152,7 @@ const Payments = () => {
   }
 
   return (
-    <>
+    <div className='relative'>
       <NavbarHeader title='Pagesat' color='dark' />
       <TableTopActions
         title='Shto pagesë'
@@ -162,20 +171,24 @@ const Payments = () => {
           [bottomRows] as { [key: string]: string | number; key: string }[]
         }
         style={{ blockSize: 'unset' }}
+        onOutsideClick={() => {
+          setClickedRowId('');
+        }}
       />
       <AddPayment
         title={
-          openPaymentModal === actionsEnum.add
+          paymentsContext.paymentModal === actionsEnum.add
             ? 'Shto pagesë'
             : 'Ndrysho pagesën'
         }
-        isOpen={Boolean(openPaymentModal)}
+        isOpen={Boolean(paymentsContext.paymentModal)}
         onClose={handleCloseModal}
-        action={openPaymentModal ?? actionsEnum.add}
-        selectedPayment={payment}
+        action={paymentsContext.paymentModal ?? actionsEnum.add}
+        selectedPayment={paymentsContext.payment}
       />
       <UserPayments />
-    </>
+      {isFetching && <Loader position='absolute' />}
+    </div>
   );
 };
 

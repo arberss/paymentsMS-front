@@ -1,3 +1,4 @@
+import Outside from '@/shared-components/OutsideWrapper/Outside';
 import DataGrid from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import Pagination from '../Pagination/Pagination';
@@ -7,7 +8,7 @@ import './table.scss';
 
 export type columnRowType = { [key: string]: any };
 
-interface TableProps {
+export interface TableProps {
   columns: { key: string; name: string }[];
   rows: { key: string; [key: string]: string | number | undefined }[];
   onRowClick?: (column: columnRowType, row: columnRowType) => void;
@@ -31,6 +32,7 @@ interface TableProps {
   };
   bottomRows?: { key: string; [key: string]: string | number }[] | null;
   style?: React.CSSProperties;
+  onOutsideClick?: () => void;
 }
 
 const Table = ({
@@ -43,6 +45,7 @@ const Table = ({
   options,
   bottomRows,
   style,
+  onOutsideClick,
 }: TableProps) => {
   let customColumns = [...columns];
 
@@ -62,7 +65,7 @@ const Table = ({
       },
     ];
 
-    if (options?.actionColumn?.position === 'left') {
+    if (options?.actionColumn?.position === 'right') {
       customColumns.push(...tableActions);
     } else {
       customColumns = [...tableActions, ...customColumns];
@@ -88,7 +91,7 @@ const Table = ({
         table={gridElement}
         options={{ exports, title: options?.tableTitle }}
       />
-      {gridElement}
+      <Outside onOutsideClick={onOutsideClick}>{gridElement}</Outside>
       <Pagination
         activePage={options?.pagination?.activePage}
         size={options?.pagination?.size}

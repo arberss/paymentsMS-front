@@ -188,6 +188,10 @@ export const PaymentsMapper = ({
           userPaymentsId: payment._id,
           personalNumber: payment.user.personalNumber,
           name: `${payment.user.firstName} ${payment.user.lastName}`,
+          status:
+            typeof payment.user.status === 'string'
+              ? payment.user.status
+              : payment.user.status.name,
         });
       }
 
@@ -243,7 +247,7 @@ export const calculateYearTotal = (data: IPaymentsUser[]) => {
   data?.forEach((payment: IPaymentsUser) => {
     payment.payments.forEach((item) => {
       years[item.payedForYear] =
-        years[item.payedForYear] + (item.amount || 0) || (item.amount || 0);
+        years[item.payedForYear] + (item.amount || 0) || item.amount || 0;
       years['totalPayed'] = (years['totalPayed'] || 0) + (item.amount || 0);
     });
   });
