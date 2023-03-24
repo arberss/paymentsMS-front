@@ -73,18 +73,16 @@ const Table = ({
   }
 
   const gridElement = (
-    <Outside onOutsideClick={onOutsideClick}>
-      <DataGrid
-        style={style}
-        className='rdg-light tableGrid'
-        columns={customColumns}
-        rows={rows}
-        onRowDoubleClick={onRowDoubleClick}
-        onRowClick={onRowClick}
-        bottomSummaryRows={bottomRows}
-        rowHeight={45}
-      />
-    </Outside>
+    <DataGrid
+      style={style}
+      className='rdg-light tableGrid'
+      columns={customColumns}
+      rows={rows}
+      onRowDoubleClick={onRowDoubleClick}
+      onRowClick={onRowClick}
+      bottomSummaryRows={bottomRows}
+      rowHeight={45}
+    />
   );
 
   return (
@@ -93,7 +91,7 @@ const Table = ({
         table={gridElement}
         options={{ exports, title: options?.tableTitle }}
       />
-      {gridElement}
+      <Outside onOutsideClick={onOutsideClick}>{gridElement}</Outside>
       <Pagination
         activePage={options?.pagination?.activePage}
         size={options?.pagination?.size}

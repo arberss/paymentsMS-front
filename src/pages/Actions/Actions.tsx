@@ -149,6 +149,7 @@ const Actions = () => {
         types={calculatedByYears?.years}
         typeName={calculatedByYears?.years}
         operator={Operators['+']}
+        showBottomRow={false}
       />
       <GeneralCalculations
         data={bottomRows}
